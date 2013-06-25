@@ -28,9 +28,9 @@ package body Implementation
   ---------------
     NAME_BUTTON      : constant String_2             := "Button";
     NAME_EDIT        : constant String_2             := "Edit";
-    CONSOLE_YIELD    : constant Duration             := 0.005;
     BORDER_WIDTH     : constant Integer_4_Signed_C   := 3;
     BORDER_HEIGHT    : constant Integer_4_Signed_C   := 22;
+    CONSOLE_YIELD    : constant Duration             := 0.005;
     CONSOLE_WIDTH    : constant Integer_4_Signed_C   := 512 + BORDER_WIDTH * 2;
     CONSOLE_HEIGHT   : constant Integer_4_Signed_C   := 550 + BORDER_WIDTH + BORDER_HEIGHT;
     BUTTON_WIDTH     : constant Integer_4_Signed_C   := 72;
@@ -89,7 +89,7 @@ package body Implementation
       Non_Client_Metrics : aliased Record_Non_Client_Metrics               := (others => <>);
       Message            : aliased Record_Message                          := (others => <>);
       Class              : aliased Record_Window_Class                     := (others => <>);
-      Handles            :         array(CONSOLE_BUTTONS'range) of Address := (others => NULL_ADDRESS);
+      Buttons            :         array(CONSOLE_BUTTONS'range) of Address := (others => NULL_ADDRESS);
       Right_Count        :         Integer_4_Signed_C                      := 1;
       Context            :         Address                                 := Get_Device_Context(Get_Desktop_Window);
       Text_Box           :         Address                                 := NULL_ADDRESS;
@@ -235,9 +235,13 @@ package body Implementation
         if
         System_Parameter_Information(
           Action       => GET_NON_CLIENT_METRICS,
-          Parameter_A  => Non_Client_Metrics.Size,
+          User_Profile => 0,
           Parameter_B  => Non_Client_Metrics'address,
-          User_Profile => 0) = FAILED
+          Parameter_A  =>(
+            if Get_Version >= Windows_2_6_System then
+              Non_Client_Metrics.Size
+            else
+              Non_Client_Metrics.Size - Integer_4_Unsigned_C(Integer_4_Signed_C'size / Byte'size))) = FAILED
         then
           raise System_Call_Failure;
         end if;
@@ -252,11 +256,11 @@ package body Implementation
         if Context = NULL_ADDRESS then
           raise System_Call_Failure;
         end if;
-        for I in Handles'range loop
+        for I in Buttons'range loop
           if CONSOLE_BUTTONS(I).Action = null then
             Right_Count := Right_Count + 1;
           end if;
-          Handles(I) :=
+          Buttons(I) :=
             Create_Window(
               Class_Name  => To_String_2_C(NAME_BUTTON),
               Window_Name => To_String_2_C(NULL_STRING_2),
@@ -274,12 +278,12 @@ package body Implementation
                   Integer_4_Signed_C(I) * PADDING + (Integer_4_Signed_C(I) - 1) * BUTTON_WIDTH
                 else -- Right justify
                   CONSOLE_WIDTH - BORDER_WIDTH - (Right_Count * PADDING + (Right_Count - 1) * BUTTON_WIDTH)));
-          if Handles(I) = NULL_ADDRESS then
+          if Buttons(I) = NULL_ADDRESS then
             raise System_Call_Failure;
           end if;
           if
           Send_Message(
-            Window        => Handles(I),
+            Window        => Buttons(I),
             Message       => EVENT_SET_FONT,
             Data_Signed   => 0,
             Data_Unsigned =>
@@ -290,7 +294,7 @@ package body Implementation
           end if;
           if
           Send_Message(
-            Window        => Handles(I),
+            Window        => Buttons(I),
             Message       => EVENT_SET_TEXT,
             Data_Unsigned => 0,
             Data_Signed   =>
@@ -308,7 +312,7 @@ package body Implementation
             X           => PADDING,
             Y           => PADDING,
             Width       => CONSOLE_WIDTH  - PADDING * 2 - BORDER_WIDTH * 2,
-            Height      => CONSOLE_HEIGHT - PADDING * 3 - BORDER_WIDTH - BUTTON_HEIGHT - BORDER_HEIGHT ,
+            Height      => CONSOLE_HEIGHT - PADDING * 3 - BORDER_WIDTH - BORDER_HEIGHT  - BUTTON_HEIGHT,
             Parent      => Console,
             Menu        => 0,
             Instance    => Get_Current_Instance,

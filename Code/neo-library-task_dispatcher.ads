@@ -19,15 +19,13 @@ with
   System.Storage_Elements,
   Neo.System.Processor,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 use
   System,
   System.Storage_Elements,
   Neo.System.Processor,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 package Neo.Library.Task_Dispatcher
   ---------------
   -- Constants --

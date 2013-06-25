@@ -30,6 +30,10 @@ use
   Neo.Foundation.Data_Types;
 package Neo.Foundation.Output
   is
+  ----------------
+  -- Exceptions --
+  ----------------
+    Title_Is_Too_Large_To_Fit_On_A_Single_Line : Exception;
   ---------------
   -- Accessors --
   ---------------
@@ -45,6 +49,9 @@ package Neo.Foundation.Output
   -----------------
     procedure Finalize;
     procedure Test;
+    procedure Put_Title(
+      Title : in String_2);
+    procedure Hang_Window;
     procedure Set_Put_Debug(
       Do_Put_Debug : in Boolean);
     procedure Set_Put(
@@ -99,6 +106,9 @@ private
   -- Constants -- The localization failure strings here should be the only untranslated strings in the program
   ---------------
     DO_PUT_LOCALIZE_FAILURE        : constant Boolean            := False;
+    NUMBER_OF_SECONDS_TO_DELAY     : constant Integer_4_Signed   := 3;
+    TESTING_SEPORATOR              : constant String_2           := "_";
+    TESTING_INPUT_HANG_INCREMENT   : constant String_2           := ">";
     FAILED_GET_CATALOG             : constant String_2           := "Attempted to call Get_Catalog when no catalog was created!";
     FAILED_SET_CATALOG_PATH        : constant String_2           := "Failed to create catalog at path: ";
     FAILED_LOCALIZE_PREFIX         : constant String_2           := "Tried to localize string ";

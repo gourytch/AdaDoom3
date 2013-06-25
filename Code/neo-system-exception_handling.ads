@@ -18,12 +18,10 @@ with
   Ada.Unchecked_Deallocation,
   Neo.Foundation.Output,
   Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing,
   Neo.System.Text;
 use
   Neo.Foundation.Output,
   Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing,
   Neo.System.Text;
 package Neo.System.Exception_Handling
   is

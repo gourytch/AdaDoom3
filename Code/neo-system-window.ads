@@ -21,7 +21,6 @@ with
   Ada.Command_Line,
   Neo.Foundation.Output,
   Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing,
   Neo.Foundation.Generic_Protected;
 use
   System,
@@ -29,8 +28,7 @@ use
   Interfaces.C,
   Ada.Command_Line,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 package Neo.System.Window
   is
   ------------------

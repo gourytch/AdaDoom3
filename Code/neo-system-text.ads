@@ -16,12 +16,10 @@
 --
 with
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 use
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 package Neo.System.Text
   is
   ------------------
@@ -70,6 +68,12 @@ package Neo.System.Text
 -------
 private
 -------
+  ---------------
+  -- Constants --
+  ---------------
+    FAILED_GET_LANGUAGE  : constant String_2 := "Failed to get language! Defaulting to English.";
+    FAILED_GET_CLIPBOARD : constant String_2 := "Failed get clipboard";
+    FAILED_SET_CLIPBOARD : constant String_2 := "Failed to set clipboard!";
   --------------------
   -- Implementation --
   --------------------

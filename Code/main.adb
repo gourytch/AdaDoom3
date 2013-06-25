@@ -21,7 +21,6 @@ with
   Neo,
   Neo.Foundation.Output,
   Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing,
   Neo.System,
   Neo.System.Text,
   Neo.System.Memory,
@@ -35,10 +34,8 @@ use
   Ada.Calendar,
   Ada.Calendar.Formatting,
   Neo,
-  Neo.System,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 procedure Main
   is
   ---------------
@@ -67,24 +64,21 @@ procedure Main
   --------------------
     task body Task_Secondary
       is
-      Do_Exit : Boolean := False;
       begin
         -----------
         accept Run;
         -----------
-        ---------------
-        Main_Game_Loop:
-        ---------------
+        ----------
+        Game_Loop:
+        ----------
           begin
-            --Neo.Game.Main_Loop.Initialize;
+            --Neo.Game.Initialize;
             loop
               select
-                ---------------
-                accept Finalize
-                ---------------
-                  do
-                    Do_Exit := True;
-                  end Finalize;
+                ----------------
+                accept Finalize;
+                ----------------
+                exit;
               else
                 if DO_TEST then
                   delay 5.0;
@@ -93,12 +87,11 @@ procedure Main
                   null; -- Secondary execution goes here
                 end if;
               end select;
-              exit when Do_Exit;
             end loop;
           exception
             when Error: others =>
               Exceptions(2):= Save_Occurrence(Error);
-          end Main_Game_Loop;
+          end Game_Loop;
         if Exceptions(2) /= null then
           --Neo.System.Window.Finalize; -- Should kill primary execution (Neo.System.Window.Run)
           ----------------
@@ -129,21 +122,20 @@ procedure Main
         Put_Debug_Line(L("set"));
         Secondary.Run;
         Put_Debug_Line(L("Go!"));
-        if DO_TEST then
+        if not DO_TEST then
+          null; -- Normal primary execution, most likely a call to Neo.System.Window.Run
+        else
           if DO_TEST_DEBUGGING then
             Neo.Foundation.Output.Test;
-            Neo.Foundation.Package_Testing.Test;
           end if;
           Neo.System.Test;
           Neo.System.Text.Test;
           Neo.System.Memory.Test;
           Neo.System.Processor.Test;
           Neo.System.Exception_Handling.Test;
-        else
-          null; -- Normal primary execution, most likely a call to Neo.System.Window.Run
         end if;
-        Put_Debug_Line(L("Goodbye"));
         Secondary.Finalize;
+        Put_Debug_Line(L("Goodbye"));
         Did_Finalize_Secondary := True;
         --Neo.System.Network.Finalize;
         --Neo.System.Input.Finalize;
@@ -161,7 +153,7 @@ procedure Main
         Put_Line(L("Error: ") & To_String_2(Exception_Name(Exceptions(I).all)));
         Put_Line(To_String_2(Exception_Message(Exceptions(I).all)));
         if Exception_Name(Exceptions(I).all) = "NEO.SYSTEM.SYSTEM_CALL_FAILURE" then
-          Put_Last_Error_Number;
+          Neo.System.Put_Last_Error_Number;
         end if;
       end if;
     end loop;

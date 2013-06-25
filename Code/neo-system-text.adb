@@ -27,11 +27,11 @@ package body Neo.System.Text
     procedure Test
       is
       begin
-        Put_Title("TEXT TEST");
-        Put_Line("Language" & ": " & Enumerated_Language'Wide_Image(Get_Language));
+        Put_Title(L("TEXT TEST"));
+        Put_Line(L("Language: ") & Enumerated_Language'Wide_Image(Get_Language));
         Put_Line(Get_Clipboard);
-        Set_Clipboard("Yes");
-        Put_Line("But does it work? " & Get_Clipboard & "!");
+        Set_Clipboard(L("Yes"));
+        Put_Line(L("But does it work? ") & Get_Clipboard & "!");
         Hang_Window;
       end Test;
   ------------------
@@ -44,6 +44,7 @@ package body Neo.System.Text
         return Implementation.Get_Language;
       exception
         when System_Call_Failure =>
+          Put_Debug_Line(L(FAILED_GET_LANGUAGE));
           return English_Language;
       end Get_Language;
   -------------------
@@ -56,6 +57,7 @@ package body Neo.System.Text
         return Implementation.Get_Clipboard;
       exception
         when System_Call_Failure =>
+          Put_Debug_Line(L(FAILED_GET_CLIPBOARD));
           return NULL_STRING_2;
       end Get_Clipboard;
   -------------------
@@ -68,6 +70,7 @@ package body Neo.System.Text
         Implementation.Set_Clipboard(Text);
       exception
         when System_Call_Failure =>
+          Put_Debug_Line(L(FAILED_SET_CLIPBOARD));
           null;
       end Set_Clipboard;
 end Neo.System.Text;

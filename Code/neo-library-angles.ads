@@ -20,16 +20,14 @@ with
   Neo.Library.Rotations,
   Neo.Library.Quaternion,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 use
   Neo.Library.Vectors,
   Neo.Library.Matrices,
   Neo.Library.Rotations,
   Neo.Library.Quaternion,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 package Neo.Library.Angles
   is
   -------------

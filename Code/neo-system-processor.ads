@@ -18,14 +18,12 @@ with
   Interfaces,
   System,
   System.Multiprocessors,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 use
   Interfaces,
   System,
   System.Multiprocessors,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 package Neo.System.Processor
   is
   ----------------

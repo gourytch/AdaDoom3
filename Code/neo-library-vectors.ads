@@ -18,13 +18,11 @@ with
   Ada.Finalization,
   Neo.Library.Mathmatics,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 use
   Neo.Library.Mathmatics,
   Neo.Foundation.Output,
-  Neo.Foundation.Data_Types,
-  Neo.Foundation.Package_Testing;
+  Neo.Foundation.Data_Types;
 package Neo.Library.Vectors
   is
   -------------

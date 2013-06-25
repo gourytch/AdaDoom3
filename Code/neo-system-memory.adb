@@ -33,7 +33,7 @@ package body Neo.System.Memory
             Implementation.Lock(Item'address, Item'size / Byte'size);
           exception
             when System_Call_Failure =>
-              Put_Debug(FAILED_LOCK);
+              Put_Debug_Line(L(FAILED_LOCK));
           end Lock;
         procedure Unlock(
           Item : in out Type_To_Manage)
@@ -42,7 +42,7 @@ package body Neo.System.Memory
             Implementation.Unlock(Item'address, Item'size / Byte'size);
           exception
             when System_Call_Failure =>
-              Put_Debug(FAILED_UNLOCK);
+              Put_Debug_Line(L(FAILED_UNLOCK));
           end Unlock;
       end Manager;
   ----------
@@ -52,32 +52,32 @@ package body Neo.System.Memory
       is
       State : Record_State := (others => <>); -- Get_State is called after for Put_Title, instead of here, for testing purposes
       begin
-        Put_Title("MEMORY TEST");
+        Put_Title(L("MEMORY TEST"));
         State := Get_State_At_Launch;
-        Put_Line("State at launch: ");
-        Put_Line("Load: "                       & Float_4_Percent'Wide_Image(State.Load));
-        Put_Line("Disk total: "                 & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Total));
-        Put_Line("Disk available: "             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Available));
-        Put_Line("Physical total: "             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Total));
-        Put_Line("Physical available: "         & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Available));
-        Put_Line("Page file total: "            & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Total));
-        Put_Line("Page file available: "        & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Available));
-        Put_Line("Virtual total: "              & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Total));
-        Put_Line("Virtual available: "          & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available));
-        Put_Line("Virtual available extended: " & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available_Extended));
+        Put_Line(L("State at launch: "));
+        Put_Line(L("Load: ")                       & Float_4_Percent'Wide_Image(State.Load));
+        Put_Line(L("Disk total: ")                 & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Total));
+        Put_Line(L("Disk available: ")             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Available));
+        Put_Line(L("Physical total: ")             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Total));
+        Put_Line(L("Physical available: ")         & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Available));
+        Put_Line(L("Page file total: ")            & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Total));
+        Put_Line(L("Page file available: ")        & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Available));
+        Put_Line(L("Virtual total: ")              & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Total));
+        Put_Line(L("Virtual available: ")          & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available));
+        Put_Line(L("Virtual available extended: ") & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available_Extended));
         New_Line;
         State := Get_State;
-        Put_Line("State currently: ");
-        Put_Line("Load: "                       & Float_4_Percent'Wide_Image(State.Load));
-        Put_Line("Disk total: "                 & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Total));
-        Put_Line("Disk available: "             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Available));
-        Put_Line("Physical total: "             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Total));
-        Put_Line("Physical available: "         & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Available));
-        Put_Line("Page file total: "            & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Total));
-        Put_Line("Page file available: "        & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Available));
-        Put_Line("Virtual total: "              & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Total));
-        Put_Line("Virtual available: "          & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available));
-        Put_Line("Virtual available extended: " & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available_Extended));
+        Put_Line(L("State currently: "));
+        Put_Line(L("Load: ")                       & Float_4_Percent'Wide_Image(State.Load));
+        Put_Line(L("Disk total: ")                 & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Total));
+        Put_Line(L("Disk available: ")             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Disk_Bytes_Available));
+        Put_Line(L("Physical total: ")             & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Total));
+        Put_Line(L("Physical available: ")         & Integer_8_Unsigned'Wide_Image(State.Number_Of_Physical_Bytes_Available));
+        Put_Line(L("Page file total: ")            & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Total));
+        Put_Line(L("Page file available: ")        & Integer_8_Unsigned'Wide_Image(State.Number_Of_Page_File_Bytes_Available));
+        Put_Line(L("Virtual total: ")              & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Total));
+        Put_Line(L("Virtual available: ")          & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available));
+        Put_Line(L("Virtual available extended: ") & Integer_8_Unsigned'Wide_Image(State.Number_Of_Virtual_Bytes_Available_Extended));
         Hang_Window;
       end Test;
   ---------------------
@@ -91,7 +91,7 @@ package body Neo.System.Memory
         Implementation.Set_Byte_Limits(Minimum, Maximum);
       exception
         when System_Call_Failure =>
-          Put_Debug(FAILED_SET_BYTE_LIMITS);
+          Put_Debug_Line(L(FAILED_SET_BYTE_LIMITS));
       end Set_Byte_Limits;
   ---------------
   -- Get_State --
