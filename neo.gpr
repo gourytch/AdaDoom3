@@ -1,0 +1,163 @@
+--
+--
+--
+--
+--
+--
+--
+-- The windows version of gps does not come with a 64 bit version of gnatmake and when I search for MinGW
+-- builds with 64 bit support they lack support for things like laddr2line (needed for -g flag). This makes
+-- 64 bit builds effectively impossible for Windows users not used to commandline.
+--
+--
+--
+--
+--
+--
+project Neo is
+  -------------
+  -- Options --
+  -------------
+    type Option_Boolean is(
+      "Yes",
+      "No");
+    type Option_Build is(
+      "32-Bit",
+      "64-Bit");
+    type Option_Processor is(
+      "ARM",
+      "PowerPC",
+      "x86-64");
+    type Option_System is(
+      "SDL",
+      "X11",
+      "Cocoa",
+      "Wayland",
+      "Windows");
+    type Option_Game is(
+      "Archetype",
+      "Doom3");
+  ---------------
+  -- Scenarios -- In the GPS GUI scenarios are displayed with the latest External call on top within the widget
+  ---------------
+    DEBUGGING : Option_Boolean   := External("Debugging", "Yes");
+    OPTIMIZE  : Option_Boolean   := External("Optimize",  "Yes");
+    SAFETY    : Option_Boolean   := External("Safety",    "Yes");
+    LIBRARIES : Option_Boolean   := External("Libraries", "Yes");
+    BUILD     : Option_Build     := External("Build",     "32-Bit");
+    PROCESSOR : Option_Processor := External("Processor", "x86-64");
+    SYSTEM    : Option_System    := External("System",    "Windows");
+    GAME      : Option_Game      := External("Game",      "Doom3");
+  ----------------
+  -- Filesystem --
+  ----------------
+    Casing               := "Lowercase";
+    File_Main            := "main"; -- Must be correct case
+    Dot_Replacement      := "-";
+    Suffix_Specification := ".ads";
+    Suffix_Body          := ".adb";
+    Directory_Objects    := "Compilation";
+    Directory_Executable := "Binaries";
+    Directory_Code       := "Code";
+    Directory_Processor  := "Processor";
+    Directory_Games      := "Games";
+    Directory_System     := "System";
+    Directory_POSIX      := "POSIX";
+    Directory_Windowing  := "Windowing";
+    Directory_Libraries  := "Libraries";
+    Direcotry_AdaFITS    := "AdaFITS"; -- FITS image loading
+    Directory_Lumen      := "Lumen";   -- BMP and PPM image loading
+    Directory_GID        := "GID";     -- TGA, JPEG, TIFF, PNG, and GIF image loading
+    Directory_AZip       := "AZip";    -- ZIP, LZ77, and BZ2 archive compression and extraction
+    Directories          := ();
+    S                    := "";
+    case SYSTEM is
+      when "Windows"                 => S := "\";
+      when "Cocoa"                   => S := ":";
+      when "Wayland" | "X11" | "SDL" => S := "/";
+    end case;
+    Directories :=(
+      Directory_Code,
+      Directory_Code & S & Directory_Processor & S & PROCESSOR,
+      Directory_Code & S & Directory_Games     & S & GAME);
+    case LIBRARIES is
+      when "No"  => null;
+      when "Yes" =>
+        Directories := Directories &
+          (Directory_Code & S & Directory_Libraries & S & Directory_AdaFITS) &
+          (Directory_Code & S & Directory_Libraries & S & Directory_Lumen)   &
+          (Directory_Code & S & Directory_Libraries & S & Directory_AZip)    &
+          (Directory_Code & S & Directory_Libraries & S & Directory_GID);
+    end case;
+    case SYSTEM is
+      when "SDL" | "Windows" =>
+        Directories := Directories & (Directory_Code & S & Directory_System & S & SYSTEM);
+      when "X11" | "Wayland" | "Cocoa" =>
+        Directories :=
+          Directories &
+          (Directory_Code & S & Directory_System & S & Directory_POSIX) &
+          (Directory_Code & S & Directory_System & S & Directory_POSIX & S & Directory_Windowing & S & SYSTEM);
+    end case;
+    for Main                 use (Directory_Code & Directory_Games & S & GAME & Dot_Replacement & File_Main & Suffix_Body);
+    for Source_Dirs          use Directories;
+    for Object_Dir           use Directory_Objects;
+    for Exec_Dir             use Directory_Executable;
+    package Ide is
+      for Documentation_Dir  use "Documentation";
+    end Ide;
+    package Naming is
+      for Dot_Replacement    use Dot_Replacement;
+      for Casing             use Casing;
+      for Spec_Suffix("Ada") use Suffix_Specification;
+      for Body_Suffix("Ada") use Suffix_Body;
+    end Naming;
+  --------------
+  -- Switches --
+  --------------
+    Switch_Binder   :=();
+    Switch_Linker   :=(
+      "-fprofile-generate");                                          -- Generate code coverage
+    Switch_Compiler :=(
+      "-gnatW8",                                                      -- Enable unicode identifiers
+      "-gnat2012");                                                   -- Enable the Ada 2012 extensions
+    Switch_Builder  :=(
+      "-j4",                                                          -- Use four tasks during compilation
+      "-k",                                                           -- "Keep going", build as far as possible
+      "-C",                                                           -- Use mapping file
+      "-s");                                                          -- Recompile if switches are changed
+    case SAFETY is
+      when "No"  => null;
+      when "Yes" =>
+        Switch_Compiler := Switch_Compiler &(
+          "-fstack-check",                                            -- Generate checks for exceeding the stack
+          "-gnato",                                                   -- Enable overflow checking for numerics
+          "-gnatE",                                                   -- Enable dynamic generic elaboration checks
+          "-gnata");                                                  -- Enable pre and post conditions
+    end case;
+    case DEBUGGING is
+      when "No"  => null;
+      when "Yes" =>
+        Switch_Binder   := Switch_Binder   & ("-E");                  -- Store traceback in exceptions
+        Switch_Compiler := Switch_Compiler & ("-g");                  -- Create extended information in stack traces
+    end case;
+    case OPTIMIZE is
+      when "Yes" => Switch_Compiler := Switch_Compiler & ("-O3");     -- Full optimization and automatic inlining
+      when "No"  => null;
+    end case;
+    case BUILD is
+      when "64-Bit" => Switch_Compiler := Switch_Compiler & ("-m64"); -- Try 64 bit compilation
+      when "32-Bit" => null;
+    end case;
+    package Builder is
+      for Default_Switches("Ada") use Switch_Builder;
+    end Builder;
+    package Compiler is
+      for Default_Switches("Ada") use Switch_Compiler;
+    end Compiler;
+    package Binder is
+      for Default_Switches("Ada") use Switch_Binder;
+    end Binder;
+    package Linker is
+      for Default_Switches("Ada") use Switch_Linker;
+    end Linker;
+end Neo;
