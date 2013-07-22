@@ -468,12 +468,75 @@ package Neo
   -------------
   -- Records --
   -------------
+    type Record_Icon
+      is record
+      end record;
     type Record_Color
       is record
         Red   : Integer_1_Unsigned := 16#FF#;
         Green : Integer_1_Unsigned := 16#FF#;
         Blue  : Integer_1_Unsigned := 16#FF#;
       end record;
+  -------------------------
+  -- Regular Expressions -- http://web.archive.org/web/20130424155143/http://www.regular-expressions.info/reference.html
+  -------------------------
+  --
+  -- The definitions of Neo's expressions are in BNF (Backus Naur Form)
+  -- http://web.archive.org/web/20130514163308/http://cui.unige.ch/db-research/Enseignement/analyseinfo/AboutBNF.html
+  --
+  --   item        ::= element
+  --   item        ::= element *
+  --   item        ::= element +
+  --   item        ::= element ?
+  --   element     ::= nonspecial
+  --   element     ::= [nonspecial nonspecial ...]
+  --   element     ::= [^ nonspecial nonspecial ...]
+  --   element     ::= [character - character]
+  --   element     ::= .
+  --   element     ::= ( expression )
+  --   character   ::= any character, including special characters
+  --   nonspecial  ::= any character except \()[].*+?^ or \char
+  --
+  -- 1 Is_Globbing = True
+  --   globbing    ::= termglob
+  --   termglob    ::= element
+  --   termglob    ::= element element ...
+  --   termglob    ::= *
+  --   termglob    ::= ?
+  --   termglob    ::= [character character ...]
+  --   termglob    ::= [character - character]
+  --   termglob    ::= {element, element, ...}
+  --
+  -- 2 Is_Globbing = False
+  --   nonglobbing ::= termnonglob
+  --   nonglobbing ::= termnonglob | termnonglob
+  --   termnonglob ::= item
+  --   termnonglob ::= item item ...
+  --
+    type Record_Expression(
+      Pattern           : String_2;
+      Is_Case_Sensitive : Boolean     := True;
+      Is_Globbing       : Boolean     := False;
+      Optional          : Character_2 := '?';
+      Alternative       : Character_2 := '|';
+      Ranges            : Character_2 := '-';
+      Escape            : Character_2 := '\';
+      Not_Listet        : Character_2 := '^';
+      Alternation       : Character_2 := ',';
+      Any_Single        : Character_2 := '.';
+      Repeate_Zero      : Character_2 := '*';
+      Repeate_One       : Character_2 := '+';
+      Enclose_Start     : Character_2 := '(';
+      Enclose_End       : Character_2 := ')';
+      Class_Start       : Character_2 := '[';
+      Class_End         : Character_2 := ']';
+      Repeat_Start      : Character_2 := '{';
+      Repeat_End        : Character_2 := '}')
+      is private;
+    function Is_Match(
+      Expression : in Record_Expression;
+      Item       : in String_2)
+      return Boolean;
   --------------
   -- Packages --
   --------------
@@ -488,62 +551,6 @@ package Neo
       is
         procedure Run;
       end Neo.Engine;
-  ---------------
-  -- Constants --
-  ---------------
-    COLOR_BLACK             : constant Record_Color       := (16#00#, 16#00#, 16#00#);
-    COLOR_WHITE             : constant Record_Color       := (16#FF#, 16#FF#, 16#FF#);
-    COLOR_RED               : constant Record_Color       := (16#FF#, 16#00#, 16#00#);
-    COLOR_BLUE              : constant Record_Color       := (16#00#, 16#00#, 16#FF#);
-    COLOR_GREEN             : constant Record_Color       := (16#00#, 16#80#, 16#00#);
-    COLOR_YELLOW            : constant Record_Color       := (16#FF#, 16#FF#, 16#00#);
-    COLOR_ORANGE            : constant Record_Color       := (16#FF#, 16#A5#, 16#00#);
-    COLOR_VIOLET            : constant Record_Color       := (16#EE#, 16#82#, 16#EE#);
-    COLOR_PURPLE            : constant Record_Color       := (16#80#, 16#00#, 16#80#);
-    COLOR_PINK              : constant Record_Color       := (16#FF#, 16#C0#, 16#CB#);
-    COLOR_AQUA              : constant Record_Color       := (16#00#, 16#FF#, 16#FF#);
-    COLOR_SKY_BLUE          : constant Record_Color       := (16#87#, 16#CE#, 16#EB#);
-    COLOR_LIGHT_BLUE        : constant Record_Color       := (16#AD#, 16#D8#, 16#E6#);
-    COLOR_FUCHSIA           : constant Record_Color       := (16#FF#, 16#00#, 16#FF#);
-    COLOR_IVORY             : constant Record_Color       := (16#FF#, 16#FF#, 16#F0#);
-    COLOR_BEIGE             : constant Record_Color       := (16#F5#, 16#F5#, 16#DC#);
-    COLOR_WHEAT             : constant Record_Color       := (16#F5#, 16#DE#, 16#B3#);
-    COLOR_TAN               : constant Record_Color       := (16#D2#, 16#B4#, 16#8C#);
-    COLOR_KHAKI             : constant Record_Color       := (16#C3#, 16#B0#, 16#91#);
-    COLOR_SILVER            : constant Record_Color       := (16#C0#, 16#C0#, 16#C0#);
-    COLOR_GRAY              : constant Record_Color       := (16#80#, 16#80#, 16#80#);
-    COLOR_CHARCOAL          : constant Record_Color       := (16#46#, 16#46#, 16#46#);
-    COLOR_NAVY_BLUE         : constant Record_Color       := (16#00#, 16#00#, 16#80#);
-    COLOR_ROYAL_BLUE        : constant Record_Color       := (16#08#, 16#4C#, 16#9E#);
-    COLOR_CYAN              : constant Record_Color       := (16#00#, 16#FF#, 16#FF#);
-    COLOR_AQUAMARINE        : constant Record_Color       := (16#7F#, 16#FF#, 16#D4#);
-    COLOR_TEAL              : constant Record_Color       := (16#00#, 16#80#, 16#80#);
-    COLOR_FOREST_GREEN      : constant Record_Color       := (16#22#, 16#8B#, 16#22#);
-    COLOR_OLIVE             : constant Record_Color       := (16#80#, 16#80#, 16#00#);
-    COLOR_CHARTREUSE        : constant Record_Color       := (16#7F#, 16#FF#, 16#00#);
-    COLOR_LIME              : constant Record_Color       := (16#BF#, 16#FF#, 16#00#);
-    COLOR_GOLDEN            : constant Record_Color       := (16#FF#, 16#D7#, 16#00#);
-    COLOR_GOLDENROD         : constant Record_Color       := (16#DA#, 16#A5#, 16#20#);
-    COLOR_CORAL             : constant Record_Color       := (16#FF#, 16#7F#, 16#50#);
-    COLOR_SALMON            : constant Record_Color       := (16#FA#, 16#80#, 16#72#);
-    COLOR_HOT_PINK          : constant Record_Color       := (16#FC#, 16#0F#, 16#C0#);
-    COLOR_FUCHSIA           : constant Record_Color       := (16#FF#, 16#77#, 16#FF#);
-    COLOR_PUCE              : constant Record_Color       := (16#CC#, 16#88#, 16#99#);
-    COLOR_MAUVE             : constant Record_Color       := (16#E0#, 16#B0#, 16#FF#);
-    COLOR_LAVENDER          : constant Record_Color       := (16#B5#, 16#7E#, 16#DC#);
-    COLOR_PLUM              : constant Record_Color       := (16#84#, 16#31#, 16#79#);
-    COLOR_INDIGO            : constant Record_Color       := (16#4B#, 16#00#, 16#82#);
-    COLOR_MAROON            : constant Record_Color       := (16#80#, 16#00#, 16#00#);
-    COLOR_CRIMSON           : constant Record_Color       := (16#DC#, 16#14#, 16#3C#);
-    C_TRUE                  : constant Integer_4_Signed_C := 1;
-    C_FALSE                 : constant Integer_4_Signed_C := 0;
-    NULL_CHARACTER_1_C      : constant Character_1_C      := Interfaces.C.NUL;
-    NULL_CHARACTER_2_C      : constant Character_2_C      := Character_2_C'val(Character_1_C'pos(NULL_CHARACTER_1_C));
-    NULL_CHARACTER_1        : constant Character_1        := ASCII.NUL;
-    NULL_CHARACTER_2        : constant Character_2        := Character_2'val(Character_1'pos(NULL_CHARACTER_1));
-    NULL_STRING_1           : constant String_1           := "" & NULL_CHARACTER_1;
-    NULL_STRING_2           : constant String_2           := "" & NULL_CHARACTER_2;
-    NULL_STRING_2_UNBOUNDED : constant String_2_Unbounded := Ada.Strings.Wide_Unbounded.NULL_WIDE_UNBOUNDED_STRING;
   -----------------
   -- Subprograms --
   -----------------
@@ -781,66 +788,62 @@ package Neo
       is new Ada.Unchecked_Conversion(Integer_4_Signed_C, Integer_4_Unsigned);
     function To_Unchecked_Integer_4_Unsigned
       is new Ada.Unchecked_Conversion(Float_4_Real, Integer_4_Unsigned);
-  -------------------------
-  -- Regular Expressions -- http://web.archive.org/web/20130424155143/http://www.regular-expressions.info/reference.html
-  -------------------------
-  --
-  -- The definitions of Neo's expressions are in BNF (Backus Naur Form)
-  -- http://web.archive.org/web/20130514163308/http://cui.unige.ch/db-research/Enseignement/analyseinfo/AboutBNF.html
-  --
-  --   item        ::= element
-  --   item        ::= element *
-  --   item        ::= element +
-  --   item        ::= element ?
-  --   element     ::= nonspecial
-  --   element     ::= [nonspecial nonspecial ...]
-  --   element     ::= [^ nonspecial nonspecial ...]
-  --   element     ::= [character - character]
-  --   element     ::= .
-  --   element     ::= ( expression )
-  --   character   ::= any character, including special characters
-  --   nonspecial  ::= any character except \()[].*+?^ or \char
-  --
-  -- 1 Is_Globbing = True
-  --   globbing    ::= termglob
-  --   termglob    ::= element
-  --   termglob    ::= element element ...
-  --   termglob    ::= *
-  --   termglob    ::= ?
-  --   termglob    ::= [character character ...]
-  --   termglob    ::= [character - character]
-  --   termglob    ::= {element, element, ...}
-  --
-  -- 2 Is_Globbing = False
-  --   nonglobbing ::= termnonglob
-  --   nonglobbing ::= termnonglob | termnonglob
-  --   termnonglob ::= item
-  --   termnonglob ::= item item ...
-  --
-    type Record_Expression(
-      Pattern           : String_2;
-      Is_Case_Sensitive : Boolean     := True;
-      Is_Globbing       : Boolean     := False;
-      Optional          : Character_2 := '?';
-      Alternative       : Character_2 := '|';
-      Ranges            : Character_2 := '-';
-      Escape            : Character_2 := '\';
-      Not_Listet        : Character_2 := '^';
-      Alternation       : Character_2 := ',';
-      Any_Single        : Character_2 := '.';
-      Repeate_Zero      : Character_2 := '*';
-      Repeate_One       : Character_2 := '+';
-      Enclose_Start     : Character_2 := '(';
-      Enclose_End       : Character_2 := ')';
-      Class_Start       : Character_2 := '[';
-      Class_End         : Character_2 := ']';
-      Repeat_Start      : Character_2 := '{';
-      Repeat_End        : Character_2 := '}')
-      is private;
-    function Is_Match(
-      Expression : in Record_Expression;
-      Item       : in String_2)
-      return Boolean;
+  ---------------
+  -- Constants --
+  ---------------
+    COLOR_BLACK             : constant Record_Color       := (16#00#, 16#00#, 16#00#);
+    COLOR_WHITE             : constant Record_Color       := (16#FF#, 16#FF#, 16#FF#);
+    COLOR_RED               : constant Record_Color       := (16#FF#, 16#00#, 16#00#);
+    COLOR_BLUE              : constant Record_Color       := (16#00#, 16#00#, 16#FF#);
+    COLOR_GREEN             : constant Record_Color       := (16#00#, 16#80#, 16#00#);
+    COLOR_YELLOW            : constant Record_Color       := (16#FF#, 16#FF#, 16#00#);
+    COLOR_ORANGE            : constant Record_Color       := (16#FF#, 16#A5#, 16#00#);
+    COLOR_VIOLET            : constant Record_Color       := (16#EE#, 16#82#, 16#EE#);
+    COLOR_PURPLE            : constant Record_Color       := (16#80#, 16#00#, 16#80#);
+    COLOR_PINK              : constant Record_Color       := (16#FF#, 16#C0#, 16#CB#);
+    COLOR_AQUA              : constant Record_Color       := (16#00#, 16#FF#, 16#FF#);
+    COLOR_SKY_BLUE          : constant Record_Color       := (16#87#, 16#CE#, 16#EB#);
+    COLOR_LIGHT_BLUE        : constant Record_Color       := (16#AD#, 16#D8#, 16#E6#);
+    COLOR_FUCHSIA           : constant Record_Color       := (16#FF#, 16#00#, 16#FF#);
+    COLOR_IVORY             : constant Record_Color       := (16#FF#, 16#FF#, 16#F0#);
+    COLOR_BEIGE             : constant Record_Color       := (16#F5#, 16#F5#, 16#DC#);
+    COLOR_WHEAT             : constant Record_Color       := (16#F5#, 16#DE#, 16#B3#);
+    COLOR_TAN               : constant Record_Color       := (16#D2#, 16#B4#, 16#8C#);
+    COLOR_KHAKI             : constant Record_Color       := (16#C3#, 16#B0#, 16#91#);
+    COLOR_SILVER            : constant Record_Color       := (16#C0#, 16#C0#, 16#C0#);
+    COLOR_GRAY              : constant Record_Color       := (16#80#, 16#80#, 16#80#);
+    COLOR_CHARCOAL          : constant Record_Color       := (16#46#, 16#46#, 16#46#);
+    COLOR_NAVY_BLUE         : constant Record_Color       := (16#00#, 16#00#, 16#80#);
+    COLOR_ROYAL_BLUE        : constant Record_Color       := (16#08#, 16#4C#, 16#9E#);
+    COLOR_CYAN              : constant Record_Color       := (16#00#, 16#FF#, 16#FF#);
+    COLOR_AQUAMARINE        : constant Record_Color       := (16#7F#, 16#FF#, 16#D4#);
+    COLOR_TEAL              : constant Record_Color       := (16#00#, 16#80#, 16#80#);
+    COLOR_FOREST_GREEN      : constant Record_Color       := (16#22#, 16#8B#, 16#22#);
+    COLOR_OLIVE             : constant Record_Color       := (16#80#, 16#80#, 16#00#);
+    COLOR_CHARTREUSE        : constant Record_Color       := (16#7F#, 16#FF#, 16#00#);
+    COLOR_LIME              : constant Record_Color       := (16#BF#, 16#FF#, 16#00#);
+    COLOR_GOLDEN            : constant Record_Color       := (16#FF#, 16#D7#, 16#00#);
+    COLOR_GOLDENROD         : constant Record_Color       := (16#DA#, 16#A5#, 16#20#);
+    COLOR_CORAL             : constant Record_Color       := (16#FF#, 16#7F#, 16#50#);
+    COLOR_SALMON            : constant Record_Color       := (16#FA#, 16#80#, 16#72#);
+    COLOR_HOT_PINK          : constant Record_Color       := (16#FC#, 16#0F#, 16#C0#);
+    COLOR_FUCHSIA           : constant Record_Color       := (16#FF#, 16#77#, 16#FF#);
+    COLOR_PUCE              : constant Record_Color       := (16#CC#, 16#88#, 16#99#);
+    COLOR_MAUVE             : constant Record_Color       := (16#E0#, 16#B0#, 16#FF#);
+    COLOR_LAVENDER          : constant Record_Color       := (16#B5#, 16#7E#, 16#DC#);
+    COLOR_PLUM              : constant Record_Color       := (16#84#, 16#31#, 16#79#);
+    COLOR_INDIGO            : constant Record_Color       := (16#4B#, 16#00#, 16#82#);
+    COLOR_MAROON            : constant Record_Color       := (16#80#, 16#00#, 16#00#);
+    COLOR_CRIMSON           : constant Record_Color       := (16#DC#, 16#14#, 16#3C#);
+    C_TRUE                  : constant Integer_4_Signed_C := 1;
+    C_FALSE                 : constant Integer_4_Signed_C := 0;
+    NULL_CHARACTER_1_C      : constant Character_1_C      := Interfaces.C.NUL;
+    NULL_CHARACTER_2_C      : constant Character_2_C      := Character_2_C'val(Character_1_C'pos(NULL_CHARACTER_1_C));
+    NULL_CHARACTER_1        : constant Character_1        := ASCII.NUL;
+    NULL_CHARACTER_2        : constant Character_2        := Character_2'val(Character_1'pos(NULL_CHARACTER_1));
+    NULL_STRING_1           : constant String_1           := "" & NULL_CHARACTER_1;
+    NULL_STRING_2           : constant String_2           := "" & NULL_CHARACTER_2;
+    NULL_STRING_2_UNBOUNDED : constant String_2_Unbounded := Ada.Strings.Wide_Unbounded.NULL_WIDE_UNBOUNDED_STRING;
 -------
 private
 -------

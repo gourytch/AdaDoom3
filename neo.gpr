@@ -65,7 +65,7 @@ project Neo is
     Directory_POSIX      := "POSIX";
     Directory_Windowing  := "Windowing";
     Directory_Libraries  := "Libraries";
-    Direcotry_AdaFITS    := "AdaFITS"; -- FITS image loading
+    Directory_AdaFITS    := "AdaFITS"; -- FITS image loading
     Directory_Lumen      := "Lumen";   -- BMP and PPM image loading
     Directory_GID        := "GID";     -- TGA, JPEG, TIFF, PNG, and GIF image loading
     Directory_AZip       := "AZip";    -- ZIP, LZ77, and BZ2 archive compression and extraction
