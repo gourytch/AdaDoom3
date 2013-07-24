@@ -34,8 +34,7 @@ project Neo is
       "Cocoa",
       "Wayland",
       "Windows");
-    type Option_Game is(
-      "Archetype",
+    type Option_Game is( -- To add a new game, create an option here and copy and rename Code/Game/Archetype
       "Doom3");
   ---------------
   -- Scenarios -- In the GPS GUI scenarios are displayed with the latest External call on top within the widget
@@ -65,10 +64,10 @@ project Neo is
     Directory_POSIX      := "POSIX";
     Directory_Windowing  := "Windowing";
     Directory_Libraries  := "Libraries";
+    Directory_AdaZip     := "AdaZip";  -- ZIP, LZMA, and BZIP2 archive compression and extraction
     Directory_AdaFITS    := "AdaFITS"; -- FITS image loading
     Directory_Lumen      := "Lumen";   -- BMP and PPM image loading
     Directory_GID        := "GID";     -- TGA, JPEG, TIFF, PNG, and GIF image loading
-    Directory_AZip       := "AZip";    -- ZIP, LZ77, and BZ2 archive compression and extraction
     Directories          := ();
     S                    := "";
     case SYSTEM is
@@ -84,9 +83,9 @@ project Neo is
       when "No"  => null;
       when "Yes" =>
         Directories := Directories &
+          (Directory_Code & S & Directory_Libraries & S & Directory_AdaZip)  &
           (Directory_Code & S & Directory_Libraries & S & Directory_AdaFITS) &
           (Directory_Code & S & Directory_Libraries & S & Directory_Lumen)   &
-          (Directory_Code & S & Directory_Libraries & S & Directory_AZip)    &
           (Directory_Code & S & Directory_Libraries & S & Directory_GID);
     end case;
     case SYSTEM is
@@ -98,7 +97,7 @@ project Neo is
           (Directory_Code & S & Directory_System & S & Directory_POSIX) &
           (Directory_Code & S & Directory_System & S & Directory_POSIX & S & Directory_Windowing & S & SYSTEM);
     end case;
-    for Main                 use (Directory_Code & Directory_Games & S & GAME & Dot_Replacement & File_Main & Suffix_Body);
+    for Main                 use (Directory_Code & File_Main);
     for Source_Dirs          use Directories;
     for Object_Dir           use Directory_Objects;
     for Exec_Dir             use Directory_Executable;
