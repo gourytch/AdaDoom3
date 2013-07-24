@@ -14,14 +14,14 @@
 --
 --
 --
-package Neo.File.Mesh.Model.Id.MD5
+package body Neo.File.Model.Doom_3
   is
   -------------
   -- Records --
   -------------
     type Record_Element
       is record
-        
+
 struct aiFace;
 
 namespace Assimp     {
@@ -29,7 +29,7 @@ namespace MD5               {
 
 // ---------------------------------------------------------------------------
 /** Represents a single element in a MD5 file
- *  
+ *
  *  Elements are always contained in sections.
 */
 struct Element
@@ -48,7 +48,7 @@ typedef std::vector< Element > ElementList;
 
 // ---------------------------------------------------------------------------
 /** Represents a section of a MD5 file (such as the mesh or the joints section)
- *  
+ *
  *  A section is always enclosed in { and } brackets.
 */
 struct Section
@@ -275,7 +275,7 @@ public:
         */
        MD5AnimParser(SectionList& mSections);
 
-       
+
        //! Output frame rate
        float fFrameRate;
 
@@ -307,7 +307,7 @@ public:
         */
        MD5CameraParser(SectionList& mSections);
 
-       
+
        //! Output frame rate
        float fFrameRate;
 
@@ -334,7 +334,7 @@ public:
         */
        MD5Parser(char* buffer, unsigned int fileSize);
 
-       
+
        // -------------------------------------------------------------------
        /** Report a specific error message and throw an exception
         *  @param error Error message to be reported
@@ -436,8 +436,8 @@ Open Asset Import Library (assimp)
 Copyright (c) 2006-2012, assimp team
 All rights reserved.
 
-Redistribution and use of this software in source and binary forms, 
-with or without modification, are permitted provided that the 
+Redistribution and use of this software in source and binary forms,
+with or without modification, are permitted provided that the
 following conditions are met:
 
 * Redistributions of source code must retain the above
@@ -454,16 +454,16 @@ following conditions are met:
   derived from this software without specific prior
   written permission of the assimp team.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------
@@ -500,7 +500,7 @@ public:
 public:
 
   // -------------------------------------------------------------------
-  /** Returns whether the class can handle the format of the given file. 
+  /** Returns whether the class can handle the format of the given file.
    * See BaseImporter::CanRead() for details.
    */
   bool CanRead( const std::string& pFile, IOSystem* pIOHandler,
@@ -520,12 +520,12 @@ protected:
    * basing on the Importer's configuration property list.
    */
   void SetupProperties(const Importer* pImp);
-  
+
   // -------------------------------------------------------------------
-  /** Imports the given file into the given scene structure. 
+  /** Imports the given file into the given scene structure.
    * See BaseImporter::InternReadFile() for details
    */
-  void InternReadFile( const std::string& pFile, aiScene* pScene, 
+  void InternReadFile( const std::string& pFile, aiScene* pScene,
     IOSystem* pIOHandler);
 
 protected:
@@ -547,17 +547,17 @@ protected:
   void LoadMD5CameraFile ();
 
   // -------------------------------------------------------------------
-  /** Construct node hierarchy from a given MD5ANIM 
+  /** Construct node hierarchy from a given MD5ANIM
    *  @param iParentID Current parent ID
    *  @param piParent Parent node to attach to
    *  @param bones Input bones
    *  @param node_anims Generated node animations
   */
-  void AttachChilds_Anim(int iParentID,aiNode* piParent, 
+  void AttachChilds_Anim(int iParentID,aiNode* piParent,
     AnimBoneList& bones,const aiNodeAnim** node_anims);
 
   // -------------------------------------------------------------------
-  /** Construct node hierarchy from a given MD5MESH 
+  /** Construct node hierarchy from a given MD5MESH
    *  @param iParentID Current parent ID
    *  @param piParent Parent node to attach to
    *  @param bones Input bones
@@ -626,8 +626,8 @@ Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
-Redistribution and use of this software in source and binary forms, 
-with or without modification, are permitted provided that the following 
+Redistribution and use of this software in source and binary forms,
+with or without modification, are permitted provided that the following
 conditions are met:
 
 * Redistributions of source code must retain the above
@@ -644,22 +644,22 @@ conditions are met:
   derived from this software without specific prior
   written permission of the assimp team.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
 /** @file  MD5Loader.cpp
- *  @brief Implementation of the MD5 importer class 
+ *  @brief Implementation of the MD5 importer class
  */
 
 #include "AssimpPCH.h"
@@ -699,12 +699,12 @@ MD5Importer::MD5Importer()
 {}
 
 // ------------------------------------------------------------------------------------------------
-// Destructor, private as well 
+// Destructor, private as well
 MD5Importer::~MD5Importer()
 {}
 
 // ------------------------------------------------------------------------------------------------
-// Returns whether the class can handle the format of the given file. 
+// Returns whether the class can handle the format of the given file.
 bool MD5Importer::CanRead( const std::string& pFile, IOSystem* pIOHandler, bool checkSig) const
 {
   const std::string extension = GetExtension(pFile);
@@ -737,8 +737,8 @@ void MD5Importer::SetupProperties(const Importer* pImp)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Imports the given file into the given scene structure. 
-void MD5Importer::InternReadFile( const std::string& pFile, 
+// Imports the given file into the given scene structure.
+void MD5Importer::InternReadFile( const std::string& pFile,
                  aiScene* _pScene, IOSystem* _pIOHandler)
 {
   pIOHandler = _pIOHandler;
@@ -841,7 +841,7 @@ void MD5Importer::MakeDataUnique (MD5::MeshDesc& meshSrc)
 
   // try to guess how much storage we'll need for new weights
   const float fWeightsPerVert = meshSrc.mWeights.size() / (float)iNewIndex;
-  const unsigned int guess = (unsigned int)(fWeightsPerVert*iNewNum); 
+  const unsigned int guess = (unsigned int)(fWeightsPerVert*iNewNum);
   meshSrc.mWeights.reserve(guess + (guess >> 3)); // + 12.5% as buffer
 
   for (FaceList::const_iterator iter = meshSrc.mFaces.begin(),iterEnd = meshSrc.mFaces.end();iter != iterEnd;++iter){
@@ -883,11 +883,11 @@ void MD5Importer::AttachChilds_Mesh(int iParentID,aiNode* piParent, BoneList& bo
         aiNode* pc;
         // setup a new node
         *piParent->mChildren++ = pc = new aiNode();
-        pc->mName = aiString(bones[i].mName); 
+        pc->mName = aiString(bones[i].mName);
         pc->mParent = piParent;
 
         // get the transformation matrix from rotation and translational components
-        aiQuaternion quat; 
+        aiQuaternion quat;
         MD5::ConvertQuaternion ( bones[i].mRotationQuat, quat );
 
         // FIX to get to Assimp's quaternion conventions
@@ -938,7 +938,7 @@ void MD5Importer::AttachChilds_Anim(int iParentID,aiNode* piParent, AnimBoneList
         aiNode* pc;
         // setup a new node
         *piParent->mChildren++ = pc = new aiNode();
-        pc->mName = aiString(bones[i].mName); 
+        pc->mName = aiString(bones[i].mName);
         pc->mParent = piParent;
 
         // get the corresponding animation channel and its first frame
@@ -1050,7 +1050,7 @@ void MD5Importer::LoadMD5MeshFile ()
         MD5::WeightDesc& desc = meshSrc.mWeights[w];
         /* FIX for some invalid exporters */
         if (!(desc.mWeight < AI_MD5_WEIGHT_EPSILON && desc.mWeight >= -AI_MD5_WEIGHT_EPSILON ))
-          ++piCount[desc.mBone]; 
+          ++piCount[desc.mBone];
       }
     }
 
@@ -1061,7 +1061,7 @@ void MD5Importer::LoadMD5MeshFile ()
     if (mesh->mNumBones) // just for safety
     {
       mesh->mBones = new aiBone*[mesh->mNumBones];
-      for (unsigned int q = 0,h = 0; q < meshParser.mJoints.size();++q) 
+      for (unsigned int q = 0,h = 0; q < meshParser.mJoints.size();++q)
       {
         if (!piCount[q])continue;
         aiBone* p = mesh->mBones[h] = new aiBone();
@@ -1077,7 +1077,7 @@ void MD5Importer::LoadMD5MeshFile ()
         // compute w-component of quaternion
         MD5::ConvertQuaternion( boneSrc.mRotationQuat, boneSrc.mRotationQuatConverted );
       }
-  
+
       //unsigned int g = 0;
       pv = mesh->mVertices;
       for (MD5::VertexList::const_iterator iter =  meshSrc.mVertices.begin();iter != meshSrc.mVertices.end();++iter,++pv) {
@@ -1103,7 +1103,7 @@ void MD5Importer::LoadMD5MeshFile ()
             continue;
           }
 
-          const float fNewWeight = desc.mWeight / fSum; 
+          const float fNewWeight = desc.mWeight / fSum;
 
           // transform the local position into worldspace
           MD5::BoneDesc& boneSrc = meshParser.mJoints[desc.mBone];
@@ -1112,7 +1112,7 @@ void MD5Importer::LoadMD5MeshFile ()
           // use the original weight to compute the vertex position
           // (some MD5s seem to depend on the invalid weight values ...)
           *pv += ((boneSrc.mPositionXYZ+v)* desc.mWeight);
-      
+
           aiBone* bone = mesh->mBones[boneSrc.mMap];
           *bone->mWeights++ = aiVertexWeight((unsigned int)(pv-mesh->mVertices),fNewWeight);
         }
@@ -1146,7 +1146,7 @@ void MD5Importer::LoadMD5MeshFile ()
     // nnn_s.tga      - specular map
     // nnn_d.tga      - diffuse map
     if (meshSrc.mShader.length && !strchr(meshSrc.mShader.data,'.')) {
-    
+
       aiString temp(meshSrc.mShader);
       temp.Append("_local.tga");
       mat->AddProperty(&temp,AI_MATKEY_TEXTURE_NORMALS(0));
@@ -1193,9 +1193,9 @@ void MD5Importer::LoadMD5AnimFile ()
   MD5::MD5AnimParser animParser(parser.mSections);
 
   // generate and fill the output animation
-  if (animParser.mAnimatedBones.empty() || animParser.mFrames.empty() || 
+  if (animParser.mAnimatedBones.empty() || animParser.mFrames.empty() ||
     animParser.mBaseFrames.size() != animParser.mAnimatedBones.size())  {
-    
+
     DefaultLogger::get()->error("MD5ANIM: No frames or animated bones loaded");
   }
   else {
@@ -1232,7 +1232,7 @@ void MD5Importer::LoadMD5AnimFile ()
             // Allow for empty frames
             if ((*iter2).iFlags != 0) {
               throw DeadlyImportError("MD5: Keyframe index is out of range");
-            
+
             }
             continue;
           }
@@ -1334,7 +1334,7 @@ void MD5Importer::LoadMD5CameraFile ()
     cuts.push_back(0);
     cuts.push_back(frames.size()-1);
   }
-  else {    
+  else {
     cuts.insert(cuts.begin(),0);
 
     if (cuts.back() < frames.size()-1)
@@ -1344,10 +1344,10 @@ void MD5Importer::LoadMD5CameraFile ()
   pScene->mNumAnimations = cuts.size()-1;
   aiAnimation** tmp = pScene->mAnimations = new aiAnimation*[pScene->mNumAnimations];
   for (std::vector<unsigned int>::const_iterator it = cuts.begin(); it != cuts.end()-1; ++it) {
-  
+
     aiAnimation* anim = *tmp++ = new aiAnimation();
     anim->mName.length = ::sprintf(anim->mName.data,"anim%u_from_%u_to_%u",(unsigned int)(it-cuts.begin()),(*it),*(it+1));
-    
+
     anim->mTicksPerSecond = cameraParser.fFrameRate;
     anim->mChannels = new aiNodeAnim*[anim->mNumChannels = 1];
     aiNodeAnim* nd  = anim->mChannels[0] = new aiNodeAnim();
@@ -1373,8 +1373,8 @@ Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
-Redistribution and use of this software in source and binary forms, 
-with or without modification, are permitted provided that the following 
+Redistribution and use of this software in source and binary forms,
+with or without modification, are permitted provided that the following
 conditions are met:
 
 * Redistributions of source code must retain the above
@@ -1391,21 +1391,21 @@ conditions are met:
   derived from this software without specific prior
   written permission of the assimp team.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-/** @file  MD5Parser.cpp 
+/** @file  MD5Parser.cpp
  *  @brief Implementation of the MD5 parser class
  */
 #include "AssimpPCH.h"
@@ -1465,7 +1465,7 @@ MD5Parser::MD5Parser(char* _buffer, unsigned int _fileSize )
 // Report warning to the log stream
 /*static*/ void MD5Parser::ReportWarning (const char* warn, unsigned int line)
 {
-  char szBuffer[1024]; 
+  char szBuffer[1024];
   ::sprintf(szBuffer,"[MD5] Line %i: %s",line,warn);
   DefaultLogger::get()->warn(szBuffer);
 }
@@ -1529,7 +1529,7 @@ bool MD5Parser::ParseSection(Section& out)
         elem.iLineNumber = lineNumber;
         elem.szStart = buffer;
 
-        // terminate the line with zero 
+        // terminate the line with zero
         while (!IsLineEnd( *buffer))buffer++;
         if (*buffer) {
           ++lineNumber;
@@ -1616,7 +1616,7 @@ MD5MeshParser::MD5MeshParser(SectionList& mSections)
 
         // negative values, at least -1, is allowed here
         desc.mParentIndex = (int)strtol10(sz,&sz);
-    
+
         AI_MD5_READ_TRIPLE(desc.mPositionXYZ);
         AI_MD5_READ_TRIPLE(desc.mRotationQuat); // normalized quaternion, so w is not there
       }
@@ -1657,7 +1657,7 @@ MD5MeshParser::MD5MeshParser(SectionList& mSections)
           if (idx >= desc.mVertices.size())
             desc.mVertices.resize(idx+1);
 
-          VertexDesc& vert = desc.mVertices[idx]; 
+          VertexDesc& vert = desc.mVertices[idx];
           if ('(' != *sz++)
             MD5Parser::ReportWarning("Unexpected token: ( was expected",(*eit).iLineNumber);
           AI_MD5_SKIP_SPACES();
@@ -1680,7 +1680,7 @@ MD5MeshParser::MD5MeshParser(SectionList& mSections)
           if (idx >= desc.mFaces.size())
             desc.mFaces.resize(idx+1);
 
-          aiFace& face = desc.mFaces[idx];  
+          aiFace& face = desc.mFaces[idx];
           face.mIndices = new unsigned int[face.mNumIndices = 3];
           for (unsigned int i = 0; i < 3;++i) {
             AI_MD5_SKIP_SPACES();
@@ -1696,7 +1696,7 @@ MD5MeshParser::MD5MeshParser(SectionList& mSections)
           if (idx >= desc.mWeights.size())
             desc.mWeights.resize(idx+1);
 
-          WeightDesc& weight = desc.mWeights[idx];  
+          WeightDesc& weight = desc.mWeights[idx];
           weight.mBone = strtoul10(sz,&sz);
           AI_MD5_SKIP_SPACES();
           sz = fast_atoreal_move<float>(sz,weight.mWeight);
@@ -1718,7 +1718,7 @@ MD5AnimParser::MD5AnimParser(SectionList& mSections)
   mNumAnimatedComponents = UINT_MAX;
   for (SectionList::const_iterator iter =  mSections.begin(), iterEnd = mSections.end();iter != iterEnd;++iter) {
     if ((*iter).mName == "hierarchy") {
-      // "sheath" 0 63 6 
+      // "sheath" 0 63 6
       for (ElementList::const_iterator eit = (*iter).mElements.begin(), eitEnd = (*iter).mElements.end();eit != eitEnd; ++eit) {
         mAnimatedBones.push_back ( AnimBoneDesc () );
         AnimBoneDesc& desc = mAnimatedBones.back();

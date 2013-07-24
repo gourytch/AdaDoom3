@@ -25,9 +25,10 @@ use
   Interfaces.C,
   Ada.Command_Line;
 generic
-
+  with
+    procedure Handle_Graphics;
 package Neo.Command.System.Window
-  is
+  is pragma Source_File_Name("neo-window.ads");
   ------------------
   -- Enumerations --
   ------------------
@@ -36,20 +37,6 @@ package Neo.Command.System.Window
       Multi_Monitor_State,
       Fullscreen_State,
       Windowed_State);
-  -------------
-  -- Records --
-  -------------
-    type Record_Gamma
-      is record
-        Red   : Integer_4_Natural := 0;
-        Green : Integer_4_Natural := 0;
-        Blue  : Integer_4_Natural := 0;
-      end record;
-    type Record_Aspect_Ratio
-      is record
-        Horizontal : Integer_4_Positive := 1;
-        Vertical   : Integer_4_Positive := 1;
-      end record;
   --------------
   -- Packages --
   --------------
@@ -68,7 +55,7 @@ package Neo.Command.System.Window
     Aspect_Wide_Vertical     : Variable_Positive := (); (1, 1);
     Aspect_Narrow_Horizontal : Variable_Positive := ();
     Aspect_Narrow_Vertical   : Variable_Positive := ();
-    Height                   : Variable_Positive := ();480;
+    Height                   : Variable_Positive := (); 480;
     Width                    : Variable_Positive := (); 640;
     X                        : Variable_Integer  := (); 0;
     Y                        : Variable_Integer  := (); 0;

@@ -24,8 +24,8 @@ use
   Neo.Data_Types,
   Ada.Wide_Text_IO,
   Ada.Characters.Handling;
-package Neo.Command.System.OpenGL
-  is
+package body Neo.Command.System.Processor.Geometry.Graphics.OpenGL
+  is pragma Source_File_Name("neo-graphics-opengl.adb");
 /*
 ====================
 GL_SelectTexture
@@ -267,7 +267,7 @@ This routine is responsible for setting the most commonly changed state
 */
 void GL_State( uint64 stateBits, bool forceGlState ) {
     uint64 diff = stateBits ^ backEnd.glState.glStateBits;
-    
+
     if ( !r_useStateCaching.GetBool() || forceGlState ) {
         -- make sure everything is set all the time, so we
         -- can see if our delta checking is screwing up
@@ -501,8 +501,8 @@ idCVar stereoRender_warpParmZ( "stereoRender_warpParmZ", "0", CVAR_RENDERER | CV
 idCVar stereoRender_warpParmW( "stereoRender_warpParmW", "0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "development parm" );
 idCVar stereoRender_warpTargetFraction( "stereoRender_warpTargetFraction", "1.0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "fraction of half-width the through-lens view covers" );
 
-idCVar r_showSwapBuffers( "r_showSwapBuffers", "0", CVAR_BOOL, "Show timings from GL_BlockingSwapBuffers" ); 
-idCVar r_syncEveryFrame( "r_syncEveryFrame", "1", CVAR_BOOL, "Don't let the GPU buffer execution past swapbuffers" ); 
+idCVar r_showSwapBuffers( "r_showSwapBuffers", "0", CVAR_BOOL, "Show timings from GL_BlockingSwapBuffers" );
+idCVar r_syncEveryFrame( "r_syncEveryFrame", "1", CVAR_BOOL, "Don't let the GPU buffer execution past swapbuffers" );
 
 static int      swapIndex;      -- 0 or 1 into renderSync
 static GLsync   renderSync[2];
@@ -664,7 +664,7 @@ Renders the draw list twice, with slight modifications for left eye / right eye
 */
 void RB_StereoRenderExecuteBackEndCommands( const emptyCommand_t * const allCmds ) {
     uint64 backEndStartTime = Sys_Microseconds();
-    
+
     -- If we are in a monoscopic context, this draws to the only buffer, and is
     -- the same as GL_BACK.  In a quad-buffer stereo context, this is necessary
     -- to prevent GL from forcing the rendering to go to both BACK_LEFT and
@@ -701,7 +701,7 @@ void RB_StereoRenderExecuteBackEndCommands( const emptyCommand_t * const allCmds
     for ( int stereoEye = 1; stereoEye >= -1; stereoEye -= 2 ) {
         -- set up the target texture we will draw to
         const int targetEye = ( stereoEye == 1 ) ? 1 : 0;
-        
+
         -- Set the back end into a known default state to fix any stale render state issues
         GL_SetDefaultState();
         renderProgManager.Unbind();
@@ -772,7 +772,7 @@ void RB_StereoRenderExecuteBackEndCommands( const emptyCommand_t * const allCmds
     GL_Cull( CT_TWO_SIDED );
 
     -- We just want to do a quad pass - so make sure we disable any texgen and
-    -- set the texture matrix to the identity so we don't get anomalies from 
+    -- set the texture matrix to the identity so we don't get anomalies from
     -- any stale uniform data being present from a previous draw call
     const float texS[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
     const float texT[4] = { 0.0f, 1.0f, 0.0f, 0.0f };
@@ -846,8 +846,8 @@ void RB_StereoRenderExecuteBackEndCommands( const emptyCommand_t * const allCmds
             -- Always scissor to the half-screen boundary, but the viewports
             -- might cross that boundary if the lenses can be adjusted closer
             -- together.
-            glViewport( ( glConfig.nativeScreenWidth >> 1 ) - pixelDimensions, 
-                ( glConfig.nativeScreenHeight >> 1 ) - ( pixelDimensions >> 1 ), 
+            glViewport( ( glConfig.nativeScreenWidth >> 1 ) - pixelDimensions,
+                ( glConfig.nativeScreenHeight >> 1 ) - ( pixelDimensions >> 1 ),
                 pixelDimensions, pixelDimensions );
             glScissor ( 0, 0, glConfig.nativeScreenWidth >> 1, glConfig.nativeScreenHeight );
 
@@ -866,7 +866,7 @@ void RB_StereoRenderExecuteBackEndCommands( const emptyCommand_t * const allCmds
             renderProgManager.SetRenderParm( RENDERPARM_COLOR, color2.ToFloatPtr() );
 
             glViewport( ( glConfig.nativeScreenWidth >> 1 ),
-                ( glConfig.nativeScreenHeight >> 1 ) - ( pixelDimensions >> 1 ), 
+                ( glConfig.nativeScreenHeight >> 1 ) - ( pixelDimensions >> 1 ),
                 pixelDimensions, pixelDimensions );
             glScissor ( glConfig.nativeScreenWidth >> 1, 0, glConfig.nativeScreenWidth >> 1, glConfig.nativeScreenHeight );
 

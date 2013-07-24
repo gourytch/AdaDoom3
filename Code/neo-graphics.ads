@@ -14,8 +14,8 @@
 --
 --
 --
-package Neo.Command.System.Processor.Math.Graphics
-  is
+package Neo.Command.System.Processor.Geometry.Graphics
+  is pragma Source_File_Name("neo-graphics.ads");
   ------------------
   -- Enumerations --
   ------------------

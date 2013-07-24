@@ -1,5 +1,23 @@
-generic
-  with
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+package body Neo.Command.System.Processor.Geometry.Graphics.OpenGL.Import
+  is pragma Source_File_Name("neo-graphics-opengl-import.adb");
+
+
 
   ---------------
   -- Constants --

@@ -15,13 +15,13 @@
 --
 --
 separate(Neo.File.Image)
-package body Archetype
+package body FITS
   is
   ----------
   -- Load --
   ----------
     overriding function Load(
-      Tag         : in Archetype.Tag;
+      Tag         : in FITS.Tag;
       Path        : in String_2;
       Start_Frame : in Integer_4_Positive := 1;
       For_Frames  : in Integer_4_Natural  := 0)
@@ -34,11 +34,11 @@ package body Archetype
   -- Save --
   ----------
     overriding procedure Save(
-      Tag     : in Archetype.Tag;
+      Tag     : in FITS.Tag;
       Path    : in String_2;
       Graphic : in Array_Record_Graphic)
       is
       begin
         raise Unimplemented_Feature;
       end Save;
-  end Archetype;
+  end FITS;

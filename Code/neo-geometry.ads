@@ -23,8 +23,8 @@ with
   System;
 use
   System;
-package Neo.Command.System.Processor.Math
-  is
+package Neo.Command.System.Processor.Geometry
+  is pragma Source_File_Name("neo-geometry.ads");
   ------------------
   -- Enumerations --
   ------------------
@@ -55,7 +55,7 @@ CONCAVE_SHAPES_START_HERE,
         GIMPACT_SHAPE_PROXYTYPE,
 ///Multimaterial mesh
     MULTIMATERIAL_TRIANGLE_MESH_PROXYTYPE,
-        
+
         EMPTY_SHAPE_PROXYTYPE,
         STATIC_PLANE_PROXYTYPE,
         CUSTOM_CONCAVE_SHAPE_TYPE,
@@ -194,7 +194,7 @@ CONCAVE_SHAPES_END_HERE,
                 void*   m_clientObject;
                 short int m_collisionFilterGroup;
                 short int m_collisionFilterMask;
-                void*   m_multiSapParentProxy;          
+                void*   m_multiSapParentProxy;
                 Maximum : Array_Real_Vector(1..3);
                 Minimum : Array_Real_Vector(1..3);
               when Rigid_Narrow_Body =>

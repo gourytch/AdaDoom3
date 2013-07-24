@@ -14,8 +14,8 @@
 --
 --
 --
-package body Neo.Variable.Command
-  is
+package body Neo.Command
+  is pramga Source_File_Name("neo-command.adb");
   -----------
   -- Split --
   -----------
@@ -168,4 +168,4 @@ package body Neo.Variable.Command
       begin
         Variables.Element(Name).Set(Value);
       end Set;
-  end Neo.Variable.Command;
+  end Neo.Command;

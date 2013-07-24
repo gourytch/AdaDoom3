@@ -21,7 +21,7 @@ package body GIF
   -- Load --
   ----------
     overriding function Load(
-      Tag         : in Archetype.Tag;
+      Tag         : in GIF.Tag;
       Path        : in String_2;
       Start_Frame : in Integer_4_Positive := 1;
       For_Frames  : in Integer_4_Natural  := 0)
@@ -34,7 +34,7 @@ package body GIF
   -- Save --
   ----------
     overriding procedure Save(
-      Tag     : in Archetype.Tag;
+      Tag     : in GIF.Tag;
       Path    : in String_2;
       Graphic : in Array_Record_Graphic)
       is

@@ -15,7 +15,7 @@
 --
 --
 package body Neo.Command.System.Text
-  is
+  is pragma Source_File_Name("neo-text.adb");
   --------------------
   -- Implementation --
   --------------------
@@ -43,7 +43,7 @@ package body Neo.Command.System.Text
         return Implementation.Get_Language;
       exception
         when Call_Failure =>
-          Put_Debug_Line(Localize(FAILED_GET_LANGUAGE));
+          Put_Debug_Line(FAILED_GET_LANGUAGE); -- Can't localize this string
           return English_Language;
       end Get_Language;
   -------------------

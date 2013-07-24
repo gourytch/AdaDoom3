@@ -22,7 +22,7 @@ use
   Ada.Streams,
   Neo.Data_Types;
 package Neo.Command.System.Network
-  is
+  is pragma Source_File_Name("neo-network.ads");
   ----------------
   -- Exceptions --
   ----------------

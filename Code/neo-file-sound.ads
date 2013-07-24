@@ -1,4 +1,21 @@
-
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+package Neo.File.Sound
+  is
 ================================================
 idWaveFile is used for reading generic RIFF WAVE files.
 ================================================
@@ -154,7 +171,7 @@ public:
               uint32 start;               // start of the loop point
               uint32 end;                        // end of the loop point
               uint32 fraction;            // ignored
-              uint32 playCount;           // ignored    
+              uint32 playCount;           // ignored
        };
 
        const char * ReadWaveFormat( waveFmt_t & waveFmt );
@@ -165,7 +182,7 @@ public:
        static bool  WriteHeaderDirect( uint32 fileSize, idFile * file );
 
        bool           ReadLoopData( int & start, int & end );
-       
+
 private:
        idFile *                                  file;
 

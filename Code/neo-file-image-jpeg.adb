@@ -4,11 +4,11 @@
 --
 --
 --
--- Some optimizations to consider:
--- ssx, ssy ,ssxmax, ssymax as generic parameters + specialized instances
--- Consider only power-of-two upsampling factors?
--- Simplify upsampling loops in case of power-of-two upsampling factors using Shift_Right
--- Col_IDCT output direct to "flat", or something similar to NanoJPEG
+--
+--
+--
+--
+--
 --
 --
 --
@@ -21,108 +21,6 @@ with
   Ada.IO_Exceptions;
 package body Neo.File.Image.JPEG
   is
-  ------------------
-  -- Enumerations --
-  ------------------
-    type AC_DC
-      is(
-      AC,
-      DC);
-    type Enumerated_Marker
-      is(
-      Start_Marker,
-      Baseline_Transform_Marker,
-      Extended_Sequential_Transform_A_Marker,
-      Progressive_Transform_A_Marker,
-      Sequential_A_Marker,
-      Differential_Sequential_Transform_A_Marker,
-      Differential_Progressive_Transform_A_Marker,
-      Differential_Sequential_A_Marker,
-      Extension_Reserved_Marker,
-      Extended_Sequential_Transform_B_Marker,
-      Progressive_Transform_B_Marker,
-      Sequential_B_Marker,
-      Differential_Sequential_Transform_B_Marker,
-      Differential_Progressive_Transform_B_Marker,
-      Differential_Sequential_B_Marker,
-      Huffman_Table_Marker,
-      Arithmetic_Coding_Marker,
-      Quantization_Table_Marker,
-      Restart_Interval_Marker,
-      JFIF_AVI1_Motion_JPEG_Marker,
-      EXIF_TIFF_EIF_JPEG_160x120_Image_Marker, 
-      ICC_And_FlashPix_Marker,
-      Application_Unknown_A_Marker,
-      Application_Unknown_B_Marker,
-      Application_Unknown_C_Marker,
-      Application_Unknown_D_Marker,
-      Application_Unknown_E_Marker,
-      Application_Unknown_F_Marker,
-      Application_Unknown_G_Marker,
-      Application_Unknown_H_Marker,
-      Application_Unknown_I_Marker,
-      Picture_Information_Marker,
-      Photoshop_Save_As_IRB_8BIM_IPTC_Marker,
-      Copyright_Entries_Marker,
-      Comments_Marker,
-      Start_Scan_Marker,
-      End_Marker);
-    for Enumerated_Marker
-      use(
-      Start_Marker                                => 16#C0#,
-      Baseline_Transform_Marker                   => 16#C1#,
-      Extended_Sequential_Transform_A_Marker      => 16#C2#,
-      Progressive_Transform_A_Marker              => 16#C3#,
-      Sequential_A_Marker                         => 16#C4#,
-      Differential_Sequential_Transform_A_Marker  => 16#C5#,
-      Differential_Progressive_Transform_A_Marker => 16#C6#,
-      Differential_Sequential_A_Marker            => 16#C7#,
-      Extension_Reserved_Marker                   => 16#C8#,
-      Extended_Sequential_Transform_B_Marker      => 16#C9#,
-      Progressive_Transform_B_Marker              => 16#CA#,
-      Sequential_B_Marker                         => 16#CB#,
-      Differential_Sequential_Transform_B_Marker  => 16#CD#,
-      Differential_Progressive_Transform_B_Marker => 16#CE#,
-      Differential_Sequential_B_Marker            => 16#CF#,
-      Huffman_Table_Marker                        => 16#C4#,
-      Arithmetic_Coding_Marker                    => 16#CC#,
-      Quantization_Table_Marker                   => 16#DB#, 
-      Restart_Interval_Marker                     => 16#DD#,
-      JFIF_AVI1_Motion_JPEG_Marker                => 16#E0#,
-      Exchangeable_Image_Marker                   => 16#E1#,
-      ICC_And_FlashPix_Marker                     => 16#E2#,
-      Application_Unknown_A_Marker                => 16#E3#,
-      Application_Unknown_B_Marker                => 16#E4#,
-      Application_Unknown_C_Marker                => 16#E5#,
-      Application_Unknown_D_Marker                => 16#E6#,
-      Application_Unknown_E_Marker                => 16#E7#,
-      Application_Unknown_F_Marker                => 16#E8#,
-      Application_Unknown_G_Marker                => 16#E9#,
-      Application_Unknown_H_Marker                => 16#EA#,
-      Application_Unknown_I_Marker                => 16#EB#,
-      Picture_Information_Marker                  => 16#EC#,
-      Photoshop_Marker                            => 16#ED#,
-      Copyright_Entries_Marker                    => 16#EE#,
-      Comments_Marker                             => 16#FE#,
-      Start_Scan_Marker                           => 16#DA#,
-      End_Marker                                  => 16#D9#); 
-  -----------------
-  -- Subprograms --
-  -----------------
-    procedure Read_Marker(
-      image: in out Image_descriptor;
-      sh: Segment_head);
-    procedure Read_Huffman_Table(
-      image: in out Image_descriptor;
-      data_length: Natural);
-    procedure Read_Quantization_Table(
-      image: in out Image_descriptor;
-      data_length: Natural);
-    procedure Read_Restart_Interval(
-      image: in out Image_descriptor);
-    procedure Read_Exchangeable_Image(
-      image: in out Image_descriptor;
-      data_length: Natural);
   ----------
   -- Load --
   ----------
@@ -130,58 +28,15 @@ package body Neo.File.Image.JPEG
       Tag         : in JPEG.Tag;
       Path        : in String_2;
       Start_Frame : in Integer_4_Positive := 1;
-      For_Frames  : in Integer_4_Natural  := 0) 
+      For_Frames  : in Integer_4_Natural  := 0)
       return Array_Record_Graphic
       is
-      begin -- Load
-        loop
-          Get_Byte(image.buffer, b);
-          if b /= 16#FF# then
-            raise Currupt;
-          end if;
-          Get_Byte(image.buffer, b);
-          for m in id'Range loop
-            if id(m)= b then
-              sh.kind:= m;
-              Big_endian(image.buffer, sh.length);
-              sh.length:= sh.length - 2;
-              -- We consider length of contents, without the FFxx marker.
-              if some_trace then
-                Put_Line(
-                  "Segment [" & JPEG_marker'Image(sh.kind) &
-                  "], length:" & U16'Image(sh.length));
-              end if;
-              return;
-            end if;
-          end loop;
-          Raise_exception(
-            error_in_image_data'Identity,
-            "JPEG: unknown marker here: FF, " & U8'Image(b)
-          );
-          case sh.kind is
-            when DQT => -- Quantization Table
-              Read_DQT(image, Natural(sh.length));
-            when DHT => -- Huffman Table
-              Read_DHT(image, Natural(sh.length));
-            when DRI => -- Restart Interval
-              Read_DRI(image);
-            when EOI => -- End Of Input
-              exit;
-            when Start_Scan => -- Start Of Scan
-              Read_SOS;
-              exit;
-            when others =>
-              -- Skip segment data
-              for i in 1..sh.length loop
-                Get_Byte(image.buffer, b);
-              end loop;
-          end case;
-        end loop;
-        next_frame:= 0.0; -- still picture
+      begin
+        raise Unimplemented_Feature;
       end Load;
   ----------
   -- Save --
-  ----------        
+  ----------
     overriding procedure Save(
       Tag     : in JPEG.Tag;
       Path    : in String_2;
@@ -190,6 +45,181 @@ package body Neo.File.Image.JPEG
       begin
         raise Unimplemented_Feature;
       end Save;
+  end Neo.File.Image.JPEG;
+-- Some optimizations to consider:
+-- ssx, ssy ,ssxmax, ssymax as generic parameters + specialized instances
+-- Consider only power-of-two upsampling factors?
+-- Simplify upsampling loops in case of power-of-two upsampling factors using Shift_Right
+-- Col_IDCT output direct to "flat", or something similar to NanoJPEG
+--    ------------------
+--    -- Enumerations --
+--    ------------------
+--      type AC_DC
+--        is(
+--        AC,
+--        DC);
+--      type Enumerated_Marker
+--        is(
+--        Start_Marker,
+--        Baseline_Transform_Marker,
+--        Extended_Sequential_Transform_A_Marker,
+--        Progressive_Transform_A_Marker,
+--        Sequential_A_Marker,
+--        Differential_Sequential_Transform_A_Marker,
+--        Differential_Progressive_Transform_A_Marker,
+--        Differential_Sequential_A_Marker,
+--        Extension_Reserved_Marker,
+--        Extended_Sequential_Transform_B_Marker,
+--        Progressive_Transform_B_Marker,
+--        Sequential_B_Marker,
+--        Differential_Sequential_Transform_B_Marker,
+--        Differential_Progressive_Transform_B_Marker,
+--        Differential_Sequential_B_Marker,
+--        Huffman_Table_Marker,
+--        Arithmetic_Coding_Marker,
+--        Quantization_Table_Marker,
+--        Restart_Interval_Marker,
+--        JFIF_AVI1_Motion_JPEG_Marker,
+--        EXIF_TIFF_EIF_JPEG_160x120_Image_Marker,
+--        ICC_And_FlashPix_Marker,
+--        Application_Unknown_A_Marker,
+--        Application_Unknown_B_Marker,
+--        Application_Unknown_C_Marker,
+--        Application_Unknown_D_Marker,
+--        Application_Unknown_E_Marker,
+--        Application_Unknown_F_Marker,
+--        Application_Unknown_G_Marker,
+--        Application_Unknown_H_Marker,
+--        Application_Unknown_I_Marker,
+--        Picture_Information_Marker,
+--        Photoshop_Save_As_IRB_8BIM_IPTC_Marker,
+--        Copyright_Entries_Marker,
+--        Comments_Marker,
+--        Start_Scan_Marker,
+--        End_Marker);
+--      for Enumerated_Marker
+--        use(
+--        Start_Marker                                => 16#C0#,
+--        Baseline_Transform_Marker                   => 16#C1#,
+--        Extended_Sequential_Transform_A_Marker      => 16#C2#,
+--        Progressive_Transform_A_Marker              => 16#C3#,
+--        Sequential_A_Marker                         => 16#C4#,
+--        Differential_Sequential_Transform_A_Marker  => 16#C5#,
+--        Differential_Progressive_Transform_A_Marker => 16#C6#,
+--        Differential_Sequential_A_Marker            => 16#C7#,
+--        Extension_Reserved_Marker                   => 16#C8#,
+--        Extended_Sequential_Transform_B_Marker      => 16#C9#,
+--        Progressive_Transform_B_Marker              => 16#CA#,
+--        Sequential_B_Marker                         => 16#CB#,
+--        Differential_Sequential_Transform_B_Marker  => 16#CD#,
+--        Differential_Progressive_Transform_B_Marker => 16#CE#,
+--        Differential_Sequential_B_Marker            => 16#CF#,
+--        Huffman_Table_Marker                        => 16#C4#,
+--        Arithmetic_Coding_Marker                    => 16#CC#,
+--        Quantization_Table_Marker                   => 16#DB#,
+--        Restart_Interval_Marker                     => 16#DD#,
+--        JFIF_AVI1_Motion_JPEG_Marker                => 16#E0#,
+--        Exchangeable_Image_Marker                   => 16#E1#,
+--        ICC_And_FlashPix_Marker                     => 16#E2#,
+--        Application_Unknown_A_Marker                => 16#E3#,
+--        Application_Unknown_B_Marker                => 16#E4#,
+--        Application_Unknown_C_Marker                => 16#E5#,
+--        Application_Unknown_D_Marker                => 16#E6#,
+--        Application_Unknown_E_Marker                => 16#E7#,
+--        Application_Unknown_F_Marker                => 16#E8#,
+--        Application_Unknown_G_Marker                => 16#E9#,
+--        Application_Unknown_H_Marker                => 16#EA#,
+--        Application_Unknown_I_Marker                => 16#EB#,
+--        Picture_Information_Marker                  => 16#EC#,
+--        Photoshop_Marker                            => 16#ED#,
+--        Copyright_Entries_Marker                    => 16#EE#,
+--        Comments_Marker                             => 16#FE#,
+--        Start_Scan_Marker                           => 16#DA#,
+--        End_Marker                                  => 16#D9#);
+--    -----------------
+--    -- Subprograms --
+--    -----------------
+--      procedure Read_Marker(
+--        image: in out Image_descriptor;
+--        sh: Segment_head);
+--      procedure Read_Huffman_Table(
+--        image: in out Image_descriptor;
+--        data_length: Natural);
+--      procedure Read_Quantization_Table(
+--        image: in out Image_descriptor;
+--        data_length: Natural);
+--      procedure Read_Restart_Interval(
+--        image: in out Image_descriptor);
+--      procedure Read_Exchangeable_Image(
+--        image: in out Image_descriptor;
+--        data_length: Natural);
+--    ----------
+--    -- Load --
+--    ----------
+--      overriding function Load(
+--        Tag         : in JPEG.Tag;
+--        Path        : in String_2;
+--        Start_Frame : in Integer_4_Positive := 1;
+--        For_Frames  : in Integer_4_Natural  := 0)
+--        return Array_Record_Graphic
+--        is
+--        begin -- Load
+--          loop
+--            Get_Byte(image.buffer, b);
+--            if b /= 16#FF# then
+--              raise Currupt;
+--            end if;
+--            Get_Byte(image.buffer, b);
+--            for m in id'Range loop
+--              if id(m)= b then
+--                sh.kind:= m;
+--                Big_endian(image.buffer, sh.length);
+--                sh.length:= sh.length - 2;
+--                -- We consider length of contents, without the FFxx marker.
+--                if some_trace then
+--                  Put_Line(
+--                    "Segment [" & JPEG_marker'Image(sh.kind) &
+--                    "], length:" & U16'Image(sh.length));
+--                end if;
+--                return;
+--              end if;
+--            end loop;
+--            Raise_exception(
+--              error_in_image_data'Identity,
+--              "JPEG: unknown marker here: FF, " & U8'Image(b)
+--            );
+--            case sh.kind is
+--              when DQT => -- Quantization Table
+--                Read_DQT(image, Natural(sh.length));
+--              when DHT => -- Huffman Table
+--                Read_DHT(image, Natural(sh.length));
+--              when DRI => -- Restart Interval
+--                Read_DRI(image);
+--              when EOI => -- End Of Input
+--                exit;
+--              when Start_Scan => -- Start Of Scan
+--                Read_SOS;
+--                exit;
+--              when others =>
+--                -- Skip segment data
+--                for i in 1..sh.length loop
+--                  Get_Byte(image.buffer, b);
+--                end loop;
+--            end case;
+--          end loop;
+--          next_frame:= 0.0; -- still picture
+--        end Load;
+--    ----------
+--    -- Save --
+--    ----------
+--      overriding procedure Save(
+--        Tag     : in JPEG.Tag;
+--        Path    : in String_2;
+--        Graphic : in Array_Record_Graphic)
+--        is
+--        begin
+--          raise Unimplemented_Feature;
+--        end Save;
 
 
 

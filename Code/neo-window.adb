@@ -15,7 +15,7 @@
 --
 --
 PACKAGE BODY Neo.Command.System.Window
-  IS
+  IS pragma Source_File_Name("neo-window.adb");
   --------------------
   -- Implementation --
   --------------------

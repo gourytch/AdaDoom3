@@ -15,7 +15,7 @@
 --
 --
 package body Neo.Command.System.Input
-  is
+  is pragma Source_File_Name("neo-input.adb");
   --------------------
   -- Implementation --
   --------------------
@@ -47,7 +47,7 @@ package body Neo.Command.System.Input
         Implementation.Initialize(Title);
         Set_Priority();
         loop
-          select 
+          select
             accept Finalize
               do
                 Implementation.Finalize;

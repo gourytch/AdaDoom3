@@ -27,7 +27,7 @@ use
   System.Machine_Code;
   System.Multiprocessors;
 package Neo.Command.System.Processor
-  is
+  is pragma Source_File_Name("neo-processor.ads");
   ----------------
   -- Exceptions --
   ----------------

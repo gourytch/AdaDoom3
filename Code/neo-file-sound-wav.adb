@@ -1,4 +1,21 @@
-
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+--
+package body Neo.File.Sound.WAV
+  is
 
 #include "WaveFile.h"
 
@@ -6,7 +23,7 @@
 ========================
 idWaveFile::Open
 
-Returns true if the Open was successful and the file matches the expected format. If this 
+Returns true if the Open was successful and the file matches the expected format. If this
 returns false, there is no need to call Close.
 ========================
 */
@@ -243,11 +260,11 @@ const char * idWaveFile::ReadWaveFormat( waveFmt_t & format ) {
 ========================
 idWaveFile::ReadWaveFormatDirect
 
-Reads a wave format header from a file ptr, 
+Reads a wave format header from a file ptr,
 ========================
 */
 bool idWaveFile::ReadWaveFormatDirect( waveFmt_t & format, idFile *file ) {
-       
+
        file->Read( &format.basic, sizeof( format.basic ) );
        idSwapClass<waveFmt_t::basic_t> swap;
        swap.Little( format.basic.formatTag );
@@ -327,7 +344,7 @@ bool idWaveFile::ReadWaveFormatDirect( waveFmt_t & format, idFile *file ) {
 ========================
 idWaveFile::WriteWaveFormatDirect
 
-Writes a wave format header to a file ptr, 
+Writes a wave format header to a file ptr,
 ========================
 */
 bool idWaveFile::WriteWaveFormatDirect( waveFmt_t & format, idFile *file ) {
@@ -340,7 +357,7 @@ bool idWaveFile::WriteWaveFormatDirect( waveFmt_t & format, idFile *file ) {
        //swap.Little( format.basic.bitsPerSample );
        file->Write( &format.basic, sizeof( format.basic ) );
        if ( format.basic.formatTag == FORMAT_PCM ) {
-              //file->Write( &format.basic, sizeof( format.basic ) ); 
+              //file->Write( &format.basic, sizeof( format.basic ) );
        } else if ( format.basic.formatTag == FORMAT_ADPCM ) {
               //file->Write( &format.basic, sizeof( format.basic ) );
               file->Write( &format.extraSize, sizeof( format.extraSize ) );
@@ -363,7 +380,7 @@ bool idWaveFile::WriteWaveFormatDirect( waveFmt_t & format, idFile *file ) {
 ========================
 idWaveFile::WriteWaveFormatDirect
 
-Writes a wave format header to a file ptr, 
+Writes a wave format header to a file ptr,
 ========================
 */
 
@@ -417,7 +434,7 @@ bool idWaveFile::WriteDataDirect( char * _data, uint32 size, idFile * file ) {
 ========================
 idWaveFile::WriteWaveFormatDirect
 
-Writes a wave header to a file ptr, 
+Writes a wave header to a file ptr,
 ========================
 */
 
@@ -473,7 +490,7 @@ idWaveFile::Close
 Closes the file and frees resources.
 ========================
 */
-void idWaveFile::Close() { 
+void idWaveFile::Close() {
        if ( file != NULL ) {
               delete file;
               file = NULL;

@@ -20,5 +20,5 @@ with
 use
   Ada.Streams;
 package Neo.Command.System.Network.Server
-  is
+  is pragma Source_File_Name("neo-network-server.ads");
   end Neo.Command.System.Network.Server;

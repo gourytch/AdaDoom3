@@ -18,6 +18,7 @@ with
   Ada.Containers.Hashed_Maps,
   Ada.Strings.Wide_Unbounded.Wide_Hash,
 package Neo.Command
+  is pramga Source_File_Name("neo-command.ads");
   ---------------
   -- Accessors --
   ---------------

@@ -5,8 +5,8 @@
 --
 --
 --
---
 -- This should be automatically generated
+--
 --
 --
 --
@@ -27,10 +27,6 @@ with
   Neo.Command.System.Text;
   Neo.Command.System.Text.Console;
   Neo.Command.System.Processor;
-generic
-  Name       : String_2;
-  Icons      : Array_String_2;
-  Initialize : Access_Procedure;
-  Run        : Access_Procedure;
-  Finalize   : Access_Procedure;
-  Test       : Access_Procedure := null;
+package Neo.Export
+  is
+  end Neo.Export;

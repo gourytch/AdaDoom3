@@ -46,7 +46,7 @@ package body BMP
   -- Save --
   ----------
     overriding procedure Save(
-      Tag     : in Archetype.Tag;
+      Tag     : in BMP.Tag;
       Path    : in String_2;
       Graphic : in Array_Record_Graphic)
       is

@@ -22,7 +22,7 @@ use
   Interfaces,
   Interfaces.C;
 package Neo.Command.System.Memory
-  is
+  is pragma Source_File_Name("neo.memory.ads");
   -------------
   -- Records --
   -------------

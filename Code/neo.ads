@@ -63,13 +63,12 @@ package Neo
   ---------------
   -- Constants --
   ---------------
-    VERSION                  : constant String_2 := "Pre-Alpha";
-    DIRECTORY_CATALOGS       : constant String_2 := "Catalogs";
-    DIRECTORY_ASSETS         : constant String_2 := "Assets";
-    ILLIGAL_ASSET_CHARACTERS : constant String_2 := "/\:|*?<>""";
-    CHARACTER_2_REPLACEMENT  : constant String_1 := "~";
-    END_LINE                 : constant String_1 := ASCII.CR & ASCII.LF;
-    START_TIME               : constant Time     := Clock;
+    VERSION                 : constant String_2 := "Pre-Alpha";
+    DIRECTORY_CATALOGS      : constant String_2 := "Catalogs";
+    DIRECTORY_ASSETS        : constant String_2 := "Assets";
+    CHARACTER_2_REPLACEMENT : constant String_1 := "~";
+    END_LINE                : constant String_1 := ASCII.CR & ASCII.LF;
+    START_TIME              : constant Time     := Clock;
   -------------
   -- Numbers --
   -------------
@@ -477,80 +476,6 @@ package Neo
         Green : Integer_1_Unsigned := 16#FF#;
         Blue  : Integer_1_Unsigned := 16#FF#;
       end record;
-  -------------------------
-  -- Regular Expressions -- http://web.archive.org/web/20130424155143/http://www.regular-expressions.info/reference.html
-  -------------------------
-  --
-  -- The definitions of Neo's expressions are in BNF (Backus Naur Form)
-  -- http://web.archive.org/web/20130514163308/http://cui.unige.ch/db-research/Enseignement/analyseinfo/AboutBNF.html
-  --
-  --   item        ::= element
-  --   item        ::= element *
-  --   item        ::= element +
-  --   item        ::= element ?
-  --   element     ::= nonspecial
-  --   element     ::= [nonspecial nonspecial ...]
-  --   element     ::= [^ nonspecial nonspecial ...]
-  --   element     ::= [character - character]
-  --   element     ::= .
-  --   element     ::= ( expression )
-  --   character   ::= any character, including special characters
-  --   nonspecial  ::= any character except \()[].*+?^ or \char
-  --
-  -- 1 Is_Globbing = True
-  --   globbing    ::= termglob
-  --   termglob    ::= element
-  --   termglob    ::= element element ...
-  --   termglob    ::= *
-  --   termglob    ::= ?
-  --   termglob    ::= [character character ...]
-  --   termglob    ::= [character - character]
-  --   termglob    ::= {element, element, ...}
-  --
-  -- 2 Is_Globbing = False
-  --   nonglobbing ::= termnonglob
-  --   nonglobbing ::= termnonglob | termnonglob
-  --   termnonglob ::= item
-  --   termnonglob ::= item item ...
-  --
-    type Record_Expression(
-      Pattern           : String_2;
-      Is_Case_Sensitive : Boolean     := True;
-      Is_Globbing       : Boolean     := False;
-      Optional          : Character_2 := '?';
-      Alternative       : Character_2 := '|';
-      Ranges            : Character_2 := '-';
-      Escape            : Character_2 := '\';
-      Not_Listet        : Character_2 := '^';
-      Alternation       : Character_2 := ',';
-      Any_Single        : Character_2 := '.';
-      Repeate_Zero      : Character_2 := '*';
-      Repeate_One       : Character_2 := '+';
-      Enclose_Start     : Character_2 := '(';
-      Enclose_End       : Character_2 := ')';
-      Class_Start       : Character_2 := '[';
-      Class_End         : Character_2 := ']';
-      Repeat_Start      : Character_2 := '{';
-      Repeat_End        : Character_2 := '}')
-      is private;
-    function Is_Match(
-      Expression : in Record_Expression;
-      Item       : in String_2)
-      return Boolean;
-  --------------
-  -- Packages --
-  --------------
-    generic
-      Name       : String_2;
-      Icon       : Record_Icon;
-      Initialize : Access_Procedure;
-      Run        : Access_Procedure;
-      Finalize   : Access_Procedure;
-      Test       : Access_Procedure := null;
-    package Neo.Engine
-      is
-        procedure Run;
-      end Neo.Engine;
   -----------------
   -- Subprograms --
   -----------------
@@ -860,7 +785,8 @@ private
     FAILED_SAVE_CATALOG               : constant String_2           := "Failed to save catalog at path: ";
     TESTING_INPUT_HANG_INCREMENT      : constant String_2           := ">";
     HANG_INDICATOR                    : constant String_2           := "_";
-    BASE64_ALPHABET                   : constant String_1(0..63)    := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    BASE64_ALPHABET                   : constant String_1(0..63)    := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    BASE64_TERMINATOR                 : constant Character_1        := '=';
   -------------
   -- Records --
   -------------
@@ -904,7 +830,12 @@ private
       Close_Brace    : Character_2 := '}')
       is new Ada.Controlled.Finalization
       with record
-
+      Alphabet_Size : Column_Index;
+      Num_States    : State_Index)
+         Map            : Mapping;
+         States         : Regexp_Array (1 .. Num_States, 0 .. Alphabet_Size);
+         Is_Final       : Boolean_Array (1 .. Num_States);
+         Case_Sensitive : Boolean;
       end record;
   -----------------
   -- Subprograms --

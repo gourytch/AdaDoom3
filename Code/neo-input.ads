@@ -20,7 +20,7 @@ with
 use
   Ada.Calendar;
 package Neo.Command.System.Input
-  is
+  is pragma Source_File_Name("neo-input.ads");
   ----------------
   -- Exceptions --
   ----------------

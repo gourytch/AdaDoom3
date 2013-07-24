@@ -15,7 +15,7 @@
 --
 --
 package body Neo.Command.System.Network
-  is
+  is pragma Source_File_Name("neo-networkt.adb");
   --------------------
   -- Implementation --
   --------------------
@@ -160,7 +160,7 @@ package body Neo.Command.System.Network
           end if;
         end LOOP;
       exception
-        WHEN 
+        WHEN
       end To_Network_Address;
   -----------------
   -- To_String_2 --
@@ -172,8 +172,8 @@ package body Neo.Command.System.Network
       begin
         return
           Trim(Integer_1_Unsigned'Wide_Image(Network_Address.IP(1)), Both) & "." &
-          Trim(Integer_1_Unsigned'Wide_Image(Network_Address.IP(2)), Both) & "." & 
-          Trim(Integer_1_Unsigned'Wide_Image(Network_Address.IP(3)), Both) & "." & 
+          Trim(Integer_1_Unsigned'Wide_Image(Network_Address.IP(2)), Both) & "." &
+          Trim(Integer_1_Unsigned'Wide_Image(Network_Address.IP(3)), Both) & "." &
           Trim(Integer_1_Unsigned'Wide_Image(Network_Address.IP(4)), Both) & ":" &
           Trim(Integer_2_Unsigned'Wide_Image(Network_Address.Port),  Both);
       end To_String_2;

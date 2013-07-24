@@ -15,7 +15,7 @@
 --
 --
 package body Neo.Command.System.Processor
-  is
+  is pragma Source_File_Name("neo-processor.adb");
   --------------------
   -- Implementation --
   --------------------

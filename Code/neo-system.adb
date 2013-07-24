@@ -14,8 +14,8 @@
 --
 --
 --
-package body Neo.System
-  is
+package body Neo.Command.System
+  is pragma Source_File_Name("neo-system.ads");
   --------------------
   -- Implementation --
   --------------------
@@ -144,5 +144,5 @@ package body Neo.System
         when others =>
           Put_Debug_Line(Localize(FAILED_EXECUTE_APPLICATION) & Executable_Path);
       end Execute_Application;
-  end Neo.System;
+  end Neo.Command.System;
 

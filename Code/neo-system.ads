@@ -22,8 +22,8 @@ use
   System,
   Ada.Strings,
   Ada.Strings.Wide_Fixed;
-package Neo.System
-  is
+package Neo.Command.System
+  is pragma Source_File_Name("neo-system.ads");
   ----------------
   -- Exceptions --
   ----------------
@@ -157,5 +157,5 @@ private
           Executable_Path : in String_2;
           Do_Fullscreen   : in Boolean);
       end Implementation;
-  end Neo.System;
+  end Neo.Command.System;
 
