@@ -21,20 +21,22 @@ with
   Ada.Exceptions,
   Ada.Text_IO,
   Ada.Wide_Text_IO,
+  Ada.Streams,
   Ada.Strings.Fixed,
   Ada.Strings.Wide_Fixed,
   Ada.Strings.Wide_Unbounded,
   Ada.Unchecked_Conversion,
   Ada.Unchecked_Deallocation,
-  Ada.Real_Time.Timing_Events.Timing_Event_Handler;
+  Ada.Real_Time.Timing_Events;
 use
   System,
   Interfaces,
   Interfaces.C,
   Ada.Exceptions,
+  Ada.Streams,
   Ada.Strings,
   Ada.Strings.Wide_Fixed,
-  Ada.Real_Time.Timing_Events.Timing_Event_Handler;
+  Ada.Real_Time.Timing_Events;
 package Neo
   is
   ----------------
@@ -66,12 +68,14 @@ package Neo
     VERSION                 : constant String_2 := "Pre-Alpha";
     DIRECTORY_CATALOGS      : constant String_2 := "Catalogs";
     DIRECTORY_ASSETS        : constant String_2 := "Assets";
+    ERROR_REPORTING_URL     : constant String_2 := "127.0.0.1";
     CHARACTER_2_REPLACEMENT : constant String_1 := "~";
     END_LINE                : constant String_1 := ASCII.CR & ASCII.LF;
+    SECONDS_FOR_HANG        : constant Integer  := 3;
     START_TIME              : constant Time     := Clock;
-  -------------
-  -- Numbers --
-  -------------
+  ----------------
+  -- Characters --
+  ----------------
     subtype Character_1_C
       is Interfaces.C.Char;
     subtype Character_1
@@ -80,6 +84,9 @@ package Neo
       is Interfaces.C.WChar_T;
     subtype Character_2
       is Wide_Character;
+  -------------
+  -- Numbers --
+  -------------
     type Integer_Address
       is mod MEMORY_SIZE;
     subtype Integer_1_Unsigned_C
@@ -173,7 +180,7 @@ package Neo
   -- Accessors --
   ---------------
     type Access_Procedure_Put
-      is access all procedure(
+      is access procedure(
         Item : in String);
     subtype Access_Address
       is System.Address;
@@ -209,6 +216,13 @@ package Neo
       is access all Integer_2_Unsigned_C;
     type Access_Integer_1_Unsigned_C
       is access all Integer_1_Unsigned_C;
+  ------------------------
+  -- Not Null Accessors --
+  ------------------------
+    type Not_Null_Access_String_2
+      is not null access all Access_String_2;
+    type Not_Null_Access_Stream_Element_Array
+      is not null access all Stream_Element_Array;
   ------------
   -- Arrays --
   ------------
@@ -221,9 +235,6 @@ package Neo
     type Array_String_2_Unbounded
       is array(Positive range <>)
       of String_2_Unbounded;
-    type Array_Access_String_2
-      is array(Positive range <>)
-      of Access_String_2;
     type Array_Character_1_C
       is array(Positive range <>)
       of Character_1_C;
@@ -441,17 +452,8 @@ package Neo
       is access all Array_Float_4_Percent;
     type Access_Array_Float_4_Degree
       is access all Array_Float_4_Degree;
-  -----------
-  -- Types --
-  -----------
-    subtype Variable_Boolean
-      is Boolean;
-    subtype Variable_Integer
-      is Integer_8_Signed;
-    subtype Variable_Real
-      is Float_8_Real;
-    subtype Variable_String
-      is String_2_Unbounded;
+    type Not_Null_Access_Array_Not_Null_Access_String_2
+      is not null access Not_Null_Access_String_2;
   ---------------
   -- Protected --
   ---------------
@@ -469,6 +471,9 @@ package Neo
   -------------
     type Record_Icon
       is record
+        Machintosh : Not_Null_Access_String_2;
+        Windows    : Not_Null_Access_String_2;
+        Linux      : Not_Null_Access_Array_Not_Null_Access_String_2;
       end record;
     type Record_Color
       is record
@@ -476,34 +481,17 @@ package Neo
         Green : Integer_1_Unsigned := 16#FF#;
         Blue  : Integer_1_Unsigned := 16#FF#;
       end record;
+    type Record_Timer
+      is private;
   -----------------
   -- Subprograms --
   -----------------
     procedure Test;
     procedure Hang(
-      Seconds_To_Delay : in Integer_4_Positive := DEFAULT_SECONDS_TO_DELAY);
-    procedure Save_Catalog(
-      Path : in String_2);
-    function Count_Occurances(
-      Item      : in String_2;
-      Occurance : in String_2)
-      return Integer_4_Natural;
-    function Count_Lines(
-      Item : in String_2)
-      return Integer_4_Natural;
-    function Split(
-      Item : in String_2_Unbounded)
-      return Array_String_2_Unbounded;
-    function Replace_Occurances(
-      Item        : in String_2;
-      Occurance   : in String_2;
-      Replacement : in String_2)
-      return String_2;
-    function Build_Asset_Path(
-      Name      : in String_2;
-      Separator : in String_2 := "/";
-      Directory : in String_2 := ".")
-      return String_2;
+      Hang_Time : in Integer_4_Signed := SECONDS_FOR_HANG);
+    --
+    -- Timer
+    --
     function "+"(
       Left  : in Record_Timer;
       Right : in Record_Timer)
@@ -516,6 +504,9 @@ package Neo
       Timer : in Record_Timer);
     procedure Stop(
       Timer : in Record_Timer);
+    --
+    -- Input and output
+    --
     procedure Put(
       Item : in Character_2);
     procedure Put(
@@ -532,13 +523,8 @@ package Neo
       Item : in String_2);
     procedure New_Line(
       Lines : in Integer_4_Positive := 1);
-    function Localize(
-      Item : in String_2)
-      return String_2;
     function Get_Line_Size
       return Integer_4_Positive;
-    function Get_Number_Of_Lines
-      return Integer_8_Unsigned;
     function Get_Catalog
       return String_2;
     function Get_Input_Entry
@@ -558,8 +544,6 @@ package Neo
       Do_Put : in Boolean);
     procedure Set_Line_Size(
       Line_Size : in Integer_4_Positive);
-    procedure Set_Localize(
-      Localize : in Access_Function_Localize);
     procedure Set_Put(
       Put : in Access_Procedure_Put);
     generic
@@ -570,18 +554,18 @@ package Neo
       Base    : in Ada.Wide_Text_IO.Number_Base;
       Spacing : in Integer_4_Natural := 0) -- To do yet
       return String_2;
-    function To_Access_Character_1_C(
-      Item : in String_1_C)
-      return Access_Character_1_C;
-    function To_Access_Character_2_C(
-      Item : in String_2)
-      return Access_Character_2_C;
-    function To_Access_Constant_Character_1_C(
-      Item : in String_1)
-      return Access_Constant_Character_1_C;
-    function To_Access_Constant_Character_2_C(
-      Item : in String_2)
-      return Access_Constant_Character_2_C;
+    --
+    -- String manipulation
+    --
+    function To_Stream(
+      Data : in String_1)
+      return Stream_Element_Array;
+    function Split(
+      Item : in String_2_Unbounded)
+      return Array_String_2_Unbounded;
+    function Build_Asset_Path(
+      Name : in String_2)
+      return String_2;
     function To_String_1_C(
       Item : in String_1)
       return String_1_C;
@@ -617,12 +601,39 @@ package Neo
     function To_String_2(
       Item : in Access_Constant_Character_2_C)
       return String_2;
-    function To_String_1(
-      Data : in not null access Root_Stream_Type'class)
-      return String_1;
-    function To_Stream(
-      Data : in String_1)
-      return Stream;
+    function To_Access_Character_1_C(
+      Item : in String_1_C)
+      return Access_Character_1_C;
+    function To_Access_Character_2_C(
+      Item : in String_2)
+      return Access_Character_2_C;
+    function To_Access_Constant_Character_1_C(
+      Item : in String_1)
+      return Access_Constant_Character_1_C;
+    function To_Access_Constant_Character_2_C(
+      Item : in String_2)
+      return Access_Constant_Character_2_C;
+    --
+    -- Endian conversion
+    --
+    function To_Low_Order_Byte_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array;
+    function To_Low_Order_Byte_Then_Low_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array;
+    function To_Low_Order_Byte_Then_High_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array;
+    function To_High_Order_Byte_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array;
+    function To_High_Order_Byte_Then_Low_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array;
+    function To_High_Order_Byte_Then_High_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array;
     function Is_High_Order_Byte_First
       return Boolean;
     function Is_Low_Order_Byte_First
@@ -633,36 +644,9 @@ package Neo
     function Is_Little_Endian
       return Boolean
       renames Is_Low_Order_Byte_First;
-    function To_Low_Order_Byte_First(
-      Item : in Stream)
-      return Stream;
-    procedure To_Low_Order_Byte_First(
-      Item : in out Stream);
-    function To_Low_Order_Byte_Then_Low_Order_Bit_First(
-      Item : in Stream)
-      return Stream;
-    procedure To_Low_Order_Byte_Then_Low_Order_Bit_First(
-      Item : in out Stream);
-    function To_Low_Order_Byte_Then_High_Order_Bit_First(
-      Item : in Stream)
-      return Stream;
-    procedure To_Low_Order_Byte_Then_High_Order_Bit_First(
-      Item : in out Stream);
-    function To_High_Order_Byte_First(
-      Item : in Stream)
-      return Stream;
-    procedure To_High_Order_Byte_First(
-      Item : in out Stream);
-    function To_High_Order_Byte_Then_Low_Order_Bit_First(
-      Item : in Stream)
-      return Stream;
-    procedure To_High_Order_Byte_Then_Low_Order_Bit_First(
-      Item : in out Stream);
-    function To_High_Order_Byte_Then_High_Order_Bit_First(
-      Item : in Stream)
-      return Stream;
-    procedure To_High_Order_Byte_Then_High_Order_Bit_First(
-      Item : in out Stream);
+    --
+    -- Unchecked conversion
+    --
     function To_Unchecked_Address
       is new Ada.Unchecked_Conversion(Integer_Address, Address);
     function To_Unchecked_Address
@@ -760,8 +744,6 @@ package Neo
     COLOR_INDIGO            : constant Record_Color       := (16#4B#, 16#00#, 16#82#);
     COLOR_MAROON            : constant Record_Color       := (16#80#, 16#00#, 16#00#);
     COLOR_CRIMSON           : constant Record_Color       := (16#DC#, 16#14#, 16#3C#);
-    C_TRUE                  : constant Integer_4_Signed_C := 1;
-    C_FALSE                 : constant Integer_4_Signed_C := 0;
     NULL_CHARACTER_1_C      : constant Character_1_C      := Interfaces.C.NUL;
     NULL_CHARACTER_2_C      : constant Character_2_C      := Character_2_C'val(Character_1_C'pos(NULL_CHARACTER_1_C));
     NULL_CHARACTER_1        : constant Character_1        := ASCII.NUL;
@@ -769,24 +751,11 @@ package Neo
     NULL_STRING_1           : constant String_1           := "" & NULL_CHARACTER_1;
     NULL_STRING_2           : constant String_2           := "" & NULL_CHARACTER_2;
     NULL_STRING_2_UNBOUNDED : constant String_2_Unbounded := Ada.Strings.Wide_Unbounded.NULL_WIDE_UNBOUNDED_STRING;
+    C_TRUE                  : constant Integer_4_Signed_C := 1;
+    C_FALSE                 : constant Integer_4_Signed_C := 0;
 -------
 private
 -------
-  ---------------
-  -- Constants --
-  ---------------
-    DO_PUT_LOCALIZE_FAILURE           : constant Boolean            := False;
-    DOES_MACHINE_ORDER_LOW_BYTE_FIRST : constant Boolean            := (others => <>).Unsplit = 1;
-    HANG_DELAY                        : constant Duration           := 3.0;
-    HANG_INDICATORS_DRAWN_PER_SECOND  : constant Float_4_Real       := 0.5;
-    FAILED_LOCALIZE_PREVIEW_LENGTH    : constant Integer_4_Positive := 10;
-    RADIAN_IMAGE_STRING_SIZE          : constant Integer_4_Positive := 256;
-    DEFAULT_LINE_SIZE                 : constant Integer_4_Positive := 80;
-    FAILED_SAVE_CATALOG               : constant String_2           := "Failed to save catalog at path: ";
-    TESTING_INPUT_HANG_INCREMENT      : constant String_2           := ">";
-    HANG_INDICATOR                    : constant String_2           := "_";
-    BASE64_ALPHABET                   : constant String_1(0..63)    := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    BASE64_TERMINATOR                 : constant Character_1        := '=';
   -------------
   -- Records --
   -------------
@@ -809,43 +778,46 @@ private
         Start_Time : Float_8_Natural := 0.0;
         Is_Stopped : Boolean         := False;
       end record;
-    type Record_Expression(
-      Pattern        : String_2;
-      Case_Sensitive : Boolean     := True;
-      Is_Globbing    : Boolean     := False;
-      Any_Single     : Character_2 := '.'
-      Repeate_Zero   : Character_2 := '*'
-      Repeate_One    : Character_2 := '+'
-      Optional       : Character_2 := '?'
-      Alternative    : Character_2 := '|'
-      Ranges         : Character_2 := '-'
-      Escape         : Character_2 := '\'
-      Not_Listet     : Character_2 := '^'
-      Alternation    : Character_2 := ','
-      Open_Paren     : Character_2 := '('
-      Close_Paren    : Character_2 := ')'
-      Open_Bracket   : Character_2 := '['
-      Close_Bracket  : Character_2 := ']'
-      Open_Brace     : Character_2 := '{'
-      Close_Brace    : Character_2 := '}')
-      is new Ada.Controlled.Finalization
-      with record
-      Alphabet_Size : Column_Index;
-      Num_States    : State_Index)
-         Map            : Mapping;
-         States         : Regexp_Array (1 .. Num_States, 0 .. Alphabet_Size);
-         Is_Final       : Boolean_Array (1 .. Num_States);
-         Case_Sensitive : Boolean;
-      end record;
+  -------------
+  -- Numbers --
+  -------------
+    type Integer_Base64
+      is mod 2**6
+      with Size => 6;
+  ------------
+  -- Arrays --
+  ------------
+    type Array_Integer_Base64
+      is array(Positive range <>)
+      of Integer_Base64;
+  ---------------
+  -- Accessors --
+  ---------------
+    type Access_Array_Integer_Base64
+      is access all Array_Integer_Base64;
   -----------------
   -- Subprograms --
   -----------------
-    procedure Initialize(
-      Expression : in out Record_Expression);
-    procedure Adjust(
-      Expression : in out Record_Expression);
-    procedure Finalize(
-      Expression : in out Record_Expression);
+    function To_Not_Null_Access_Stream_Element_Array
+      is new Ada.Unchecked_Conversion(Access_Array_Integer_Base64, Not_Null_Access_Stream_Element_Array);
+  ---------------
+  -- Constants --
+  ---------------
+    DO_PUT_LOCALIZE_FAILURE           : constant Boolean            := False;
+    DOES_MACHINE_ORDER_LOW_BYTE_FIRST : constant Boolean            := new Record_Endian_Test.Unsplit = 1;
+    HANG_DELAY                        : constant Duration           := 3.0;
+    HANG_INDICATORS_DRAWN_PER_SECOND  : constant Float_4_Real       := 0.5;
+    FAILED_LOCALIZE_PREVIEW_LENGTH    : constant Integer_4_Positive := 10;
+    RADIAN_IMAGE_STRING_SIZE          : constant Integer_4_Positive := 256;
+    DEFAULT_LINE_SIZE                 : constant Integer_4_Positive := 80;
+    FAILED_SAVE_CATALOG               : constant String_2           := "Failed to save catalog at path: ";
+    TESTING_INPUT_HANG_INCREMENT      : constant String_2           := ">";
+    HANG_INDICATOR                    : constant String_2           := "_";
+    BASE64_TERMINATOR                 : constant Character_1        := '=';
+    BASE64_ALPHABET                   : constant array(Integer_Base64'range) of Character_1 :=(
+      'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+      'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+      '0','1','2','3','4','5','6','7','8','9','+','/');
   ---------------
   -- Protected --
   ---------------
@@ -853,15 +825,10 @@ private
       is
         procedure Put(
           Item : in String_2);
-        function Localize(
-          Item : in String_2)
-          return String_2;
         function Do_Put_Debug
           return Boolean;
         function Get_Line_Size
           return Integer_4_Positive;
-        function Get_Catalog_Path
-          return String_2;
         function Get_Catalog
           return String_2;
         function Get_Error
@@ -878,18 +845,15 @@ private
           Do_Put : in Boolean);
         procedure Set_Line_Size(
           Line_Size : in Integer_4_Positive);
-        procedure Set_Localize(
-          Localize : in Access_Subprogram_Localize);
       private
-        Current_Input_Entry  : String_2_Unbounded        := NULL_STRING_2_UNBOUNDED;
-        Current_Catalog      : String_2_Unbounded        := NULL_STRING_2_UNBOUNDED;
-        Current_Error        : String_2_Unbounded        := NULL_STRING_2_UNBOUNDED;
-        Current_Put          : Access_Procedure_Put      := Ada.Wide_Text_IO.Put'access;
-        Current_Localize     : Access_Procedure_Localize := null;
-        Current_Line_Size    : Integer_4_Positive        := DEFAULT_LINE_SIZE;
-        Current_Line_Count   : Integer_8_Unsigned        := 0;
-        Current_Do_Put       : Boolean                   := True;
-        Current_Do_Put_Debug : Boolean                   := False;
+        Current_Put          : Access_Procedure_Put := Ada.Wide_Text_IO.Put'access;
+        Current_Input_Entry  : String_2_Unbounded   := NULL_STRING_2_UNBOUNDED;
+        Current_Catalog      : String_2_Unbounded   := NULL_STRING_2_UNBOUNDED;
+        Current_Error        : String_2_Unbounded   := NULL_STRING_2_UNBOUNDED;
+        Current_Line_Size    : Integer_4_Positive   := DEFAULT_LINE_SIZE;
+        Current_Line_Count   : Integer_8_Unsigned   := 0;
+        Current_Do_Put       : Boolean              := True;
+        Current_Do_Put_Debug : Boolean              := False;
       end Protected_Input_Output;
   ---------------
   -- Variables --

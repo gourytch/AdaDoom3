@@ -110,7 +110,6 @@ package Neo.Command.System
   ----------------
   -- Suprograms --
   ----------------
-    procedure Finalize;
     procedure Test;
     function Get_Version
       return Enumerated_System;

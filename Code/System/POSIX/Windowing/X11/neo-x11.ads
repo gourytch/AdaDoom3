@@ -24,7 +24,7 @@ use
   Interfaces,
   Interfaces.C,
   Neo.Foundation.Data_Types;
-package Neo.Linux
+package Neo.X11
   is
   ---------------
   -- Constants --
@@ -41,4 +41,4 @@ private
   ----------------
   -- Directives --
   ----------------
-  end Neo.Linux;
+  end Neo.X11;

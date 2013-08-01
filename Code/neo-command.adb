@@ -15,36 +15,34 @@
 --
 --
 package body Neo.Command
-  is pramga Source_File_Name("neo-command.adb");
-  -----------
-  -- Split --
-  -----------
-    function Split(
-      Item : in String_2_Unbounded)
-      return Array_String_2_Unbounded
-      is
-      begin
-      end Split;
-  ------------------------
-  -- Replace_Occurances --
-  ------------------------
-    function Replace_Occurances(
-      Item        : in String_2;
-      Occurance   : in String_2;
-      Replacement : in String_2)
-      return String_2
-      is
-      begin
-      end Replace_Occurances;
-  ----------
-  -- Item --
-  ----------
+  is
+  -------------------
+  -- Discrete_Item --
+  -------------------
     generic
       type Type_To_Vary
         is private;
-      Inital : Type_To_Vary;
-    package Item
+    package Discrete_Item
       is
+        --------------
+        procedure Set(
+        --------------
+          Item  : in out Record_Specific_Variable;
+          Value : in     Type_To_Vary)
+          is
+          begin
+            Item.Data.Set(Value);
+            Item.Value := Type_To_Vary'wide_image(Item.Data.Get);
+          end Set;
+        -------------
+        function Get(
+        -------------
+          Item : in Record_Specifics_Variable)
+          return Type_To_Vary
+          is
+          begin
+            return Item.Data.Get;
+          end Get;
         -------------------------------------
         protected body Protected_Type_To_Vary
         -------------------------------------
@@ -70,18 +68,17 @@ package body Neo.Command
           -------
             Current : Type_To_Vary := Inital;
           end Protected_Type_To_Vary;
-        -------------------------
-        overriding procedure Set(
-        -------------------------
-          Item  : in Tagged_Protected_Type_To_Vary;
-          Value : in String_2)
+        ----------------------------
+        overriding procedure Adjust(
+        ----------------------------
+          Item : in out Record_Specific_Variable)
           is
           begin
             -----------------
             Try_Number_Parse:
             -----------------
               begin
-                Item.Data.Set(Type_To_Vary(Float_8_Real'value(Value)));
+                Item.Data.Set(Type_To_Vary(Float_8_Real'value(Item.Value)));
               exception
                 when Constraint_Error => -- Invalid character in 'value string, it has to be failed input or an enumeration
                   for I in Type_To_Vary'range loop
@@ -96,17 +93,16 @@ package body Neo.Command
           exception
             when others =>
               Put_Debug_Line(Localize(FAILED_TO_SET_VARIABLE));
-          end Set;
-        ------------------------
-        overriding function Get(
-        ------------------------
-          Item : in Tagged_Protected_Type_To_Vary)
-          return String_2
-          is
-          begin
-            return Type_To_Vary'wide_image(Item.Data.Get);
-          end Get;
-      end Item;
+          end Adjust;
+      end Discrete_Item;
+  ----------
+  -- Test --
+  ----------
+    procedure Test
+      is
+      begin
+        Put_Title(Localize("COMMAND TEST"));
+      end Test;
   ------------
   -- Handle --
   ------------
@@ -129,43 +125,50 @@ package body Neo.Command
           Put_Debug_Line(Localize(NO_SUCH_VARIABLE_OR_COMMAND));
         end if;
       end Handle;
-  ---------
-  -- Add --
-  ---------
-    procedure Add(
-      Name     : in String_2;
-      Variable : in Tagged_Record_Specifics)
+  ----------------
+  -- Initialize --
+  ----------------
+    procedure Initalize
       is
       begin
-        Variables.Insert(Name, Variable);
-      end Add;
-    --------------
-    procedure Add(
-    --------------
-      Name    : in String_2;
-      Command : in Not_Null_Access_Procedure_Command)
+      end Initialize;
+    --------------------------------
+    overriding procedure Initialize(
+    --------------------------------
+      Item : in out Record_Specifics)
       is
       begin
-        Table.Insert(Name, Command);
-      end Add;
-  ---------
-  -- Get --
-  ---------
-    function Get(
-      Name : in String_2)
-      return Tagged_Record_Specifics
+        Insert(Variables, Item'access, Item.Name);
+      end Initialize;
+    --------------------------------
+    overriding procedure Initialize(
+    --------------------------------
+      Item : in out Record_Command)
       is
       begin
-        return Variables.Element(Name);
-      end Get;
-  ---------
-  -- Set --
-  ---------
-    procedure Set(
-      Name  : in String_2;
-      Value : in String_2)
+        Insert(Table, Item'access, Item.Name);
+      end Initialize;
+  --------------
+  -- Finalize --
+  --------------
+    procedure Finalize
       is
       begin
-        Variables.Element(Name).Set(Value);
-      end Set;
+      end Finalize;
+    ------------------------------
+    overriding procedure Finalize(
+    ------------------------------
+      Item : in out Record_Specifics)
+      is
+      begin
+        Remove(Variables, Item.Name);
+      end Finalize;
+    ------------------------------
+    overriding procedure Finalize(
+    ------------------------------
+      Item : in out Record_Command)
+      is
+      begin
+        Remove(Table, Item.Name);
+      end Finalize;
   end Neo.Command;

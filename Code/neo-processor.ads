@@ -60,7 +60,7 @@ package Neo.Command.System.Processor
       --
       Apple_IBM_Motorola_Vendor,
       --
-      -- 1992 PowerPC (Performance Optimization With Enhanced RISC -€“ Performance Computing)
+      -- 1992 POWERPC (Performance Optimization With Enhanced RISC -€“ Performance Computing)
       --      http://web.archive.org/web/20110811041906/https://www-01.ibm.com/chips/techlib/techlib.nsf/techdocs/852569B20050FF778525699600741775/$file/prg.pdf
       --
     type Enumerated_Precision
@@ -163,7 +163,7 @@ private
   -- Constants --
   ---------------
     TRUST_COMPILER                      : constant Boolean  := False;
-    DELAY_FOR_PROCESSOR_SPEED_TIMING    : constant Duration := 0.1;
+    SECONDS_FOR_PROCESSOR_SPEED_TIMING  : constant Duration := 0.1;
     FAILED_GET_SPEED_IN_MEGAHERTZ_OS    : constant String_2 := "Failed to get os sanctioned MHz!";
     FAILED_GET_CLOCK_TICKS              : constant String_2 := "Failed to get os sanctioned clock ticks!";
     FAILED_GET_NUMBER_OF_CORES_OS       : constant String_2 := "Failed to get os sanctioned cores!";

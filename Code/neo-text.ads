@@ -16,10 +16,6 @@
 --
 package Neo.Command.System.Text
   is pragma Source_File_Name("neo-text.ads");
-  ----------------
-  -- Directives --
-  ----------------
-    pragma Pure;
   ------------------
   -- Enumerations --
   ------------------
@@ -57,6 +53,11 @@ package Neo.Command.System.Text
   -- Subprograms --
   -----------------
     procedure Test;
+    procedure Initialize;
+    procedure Finalize;
+    function Localize(
+      Item : in String_2)
+      return String_2;
     function Get_Language
       return Enumerated_Language;
     function Get_Clipboard
@@ -66,6 +67,15 @@ package Neo.Command.System.Text
 -------
 private
 -------
+  --------------
+  -- Packages --
+  --------------
+    package Hashed_Access_Procedure_Command
+      is new Ada.Containers.Hashed_Maps(
+        Key_Type        => String_2_Unbounded,
+        Element_Type    => String_2_Unbounded,
+        Hash            => Ada.Strings.Wide_Unbounded.Wide_Hash,
+        Equivalent_Keys => "=");
   ---------------
   -- Constants --
   ---------------

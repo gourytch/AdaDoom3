@@ -19,15 +19,8 @@ PACKAGE BODY Neo.Command.System.Window
   --------------------
   -- Implementation --
   --------------------
-    PACKAGE BODY Generic_Implementation
+    PACKAGE BODY Implementation
       IS SEPARATE;
-    PACKAGE Implementation
-      IS NEW Generic_Implementation(
-        Handle_Finalization => Handle_Finalization,
-        Handle_Activation   => Handle_Activation,
-        Handle_State_Change => Handle_State_Change,
-        Handle_Window_Move  => Handle_Window_Move,
-        Handle_Resize       => Handle_Resize);
   -------------------------------
   -- Task_Multi_Monitor_Window --
   -------------------------------

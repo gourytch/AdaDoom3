@@ -16,11 +16,6 @@
 --
 package body Neo
   is
-  --------------------
-  -- Implementation --
-  --------------------
-    package body Engine
-      is separate;
   ----------------------
   -- Protected_Status --
   ----------------------
@@ -56,18 +51,6 @@ package body Neo
           begin
             Current_Catalog := Current_Catalog & To_String_2_Unbounded(Item);
           end Put;
-        ------------------
-        function Localize(
-        ------------------
-          Item : in String_2)
-          return String_2
-          is
-          begin
-            if Current_Localize = null then
-              return NULL_STRING_2;
-            end if;
-            return Current_Localize.all(Item);
-          end Localize;
         ---------------------
         function Do_Put_Debug
         ---------------------
@@ -92,6 +75,14 @@ package body Neo
           begin
             Current_Do_Put_Debug := Do_Put_Debug;
           end Set_Do_Put_Debug;
+        --------------------------
+        procedure Set_Input_Entry(
+        --------------------------
+          Input_Entry : in String_2)
+          is
+          begin
+            Input_Entry := Input_Entry & To_String_2_Unbounded(Input_Entry);
+          end Set_Input_Entry;
         --------------------
         procedure Set_Error(
         --------------------
@@ -116,6 +107,14 @@ package body Neo
           begin
             return To_String_2(Current_Error);
           end Get_Error;
+        ------------------------
+        function Get_Input_Entry
+        ------------------------
+          return String_2
+          is
+          begin
+            return To_String_2(Current_Input_Entry);
+          end Get_Input_Entry;
         ----------------------
         function Get_Line_Size
         ----------------------
@@ -140,14 +139,6 @@ package body Neo
           begin
             Current_Line_Size := Line_Size;
           end Set_Line_Size;
-        -----------------------
-        procedure Set_Localize(
-        -----------------------
-          Localize : in Access_Subprogram_Localize)
-          is
-          begin
-            Current_Localize := Localize;
-          end Set_Localize;
       end Protected_Input_Output;
   ----------
   -- Test --
@@ -161,7 +152,7 @@ package body Neo
       function To_Image
         is new To_Radian_Image(Integer_4_Unsigned);
       begin
-        Put_Line(Localize("Test of Neo.Output"));
+        Put_Line(Localize("BASE TEST"));
         --Set_Localize(Dummy_Localize'access);
         Set_Put(Ada.Wide_Text_IO.Put'access);
         Put(Localize("Test of "));
@@ -180,46 +171,89 @@ package body Neo
         Put_Line("""" & To_Image(Data, 10) & """");
         Put_Line(Localize("The current catalog (" & Get_Catalog_Path & ": "));
         Put_Line(Get_Catalog);
-        Put_Title("SECOND PART OF THE PACKAGE_TESTING TEST FEATURING A VERY LARGE TITLE123456123456");
       end Test;
-    procedure Save_Catalog(
-      Path : in String_2);
-  --------------
-  -- Localize --
-  --------------
-    function Localize(
-      Item : in String_2)
-      return String_2
+   -----------
+   -- Start --
+   -----------
+     procedure Start
       is
-      Result : String_2 := Input_Output.Localize(Item);
       begin
-        if Result = NULL_STRING_2 then
-          if DO_PUT_LOCALIZE_FAILURE then
-            Put_Debug_Line(
-              FAILED_LOCALIZE_PREFIX & Item(Item'first..(
-                if Item'length >= FAILED_LOCALIZE_PREVIEW_LENGTH then
-                  Item'first + FAILED_LOCALIZE_PREVIEW_LENGTH - 1
-                else
-                  Item'last)) &
-              FAILED_LOCALIZE_POSTFIX);
-          end if;
-          return Item;
-        end if;
-        return Result;
-      end Localize;
+        null;--if RCurrent_Handler(The_Event) = null then
+        --  Set_Handler(The_Event, For_Duration, Events.Handler'access);
+        --else
+        --  raise Timer_Error with Timer_Name & " started already";
+        --end if;
+      end Start;
+  ----------
+  -- Stop --
+  ----------
+    procedure Stop
+      is
+      Success : Boolean := False;
+      use type Ada.Real_Time.Timing_Events.Timing_Event_Handler;
+      begin
+        null;--if Real_Time.Timing_Events.Current_Handler (The_Event) /= null then
+        --  Real_Time.Timing_Events.Cancel_Handler (The_Event, Success);
+        --  if not Success then
+        --    raise Timer_Error with "fails to cancel " & Timer_Name;
+        --  end if;
+        --end if;
+      end Stop;
+  ---------
+  -- "+" --
+  ---------
+    function "+"(
+      Left  : in Record_Timer;
+      Right : in Record_Timer)
+      return Record_Timer
+      is
+      begin
+        return (others => <>);
+      end "+";
+  ---------
+  -- "-" --
+  ---------
+    function "-"(
+      Left  : in Record_Timer;
+      Right : in Record_Timer)
+      return Record_Timer
+      is
+      begin
+        return (others => <>);
+      end "-";
+  ------------------
+  -- Save_Catalog --
+  ------------------
+    procedure Save_Catalog(
+      Path : in String_2)
+      is
+      begin
+        null;
+      end Save_Catalog;
   ----------
   -- Hang --
   ----------
     procedure Hang(
-      Seconds_To_Delay : in Integer_4_Positive := DEFAULT_SECONDS_TO_DELAY)
+      Hang_Time : in Integer_4_Signed := SECONDS_FOR_HANG)
       is
       begin
         New_Line;
-        for I in 1..Seconds_To_Delay loop
+        for I in 1..Hang_Time loop
           delay 1.0;
           Put(TESTING_INPUT_HANG_INCREMENT);
         end loop;
       end Hang;
+  --------------
+  -- New_Line --
+  --------------
+    procedure New_Line(
+      Lines : in Integer_4_Positive := 1)
+      is
+      begin
+        for I in 1..Lines loop
+          Put(To_String_2(END_LINE));
+        end loop;
+      end New_Line;
   ---------------
   -- Put_Title --
   ---------------
@@ -374,6 +408,33 @@ package body Neo
       begin
         Input_Output.Get_Catalog(Path);
       end Save_Catalog;
+  ---------------
+  -- Set_Error --
+  ---------------
+    procedure Set_Error(
+      Text : in String_2)
+      is
+      begin
+       null;
+      end Set_Error;
+  ---------------
+  -- Get_Error --
+  ---------------
+    function Get_Error
+      return String_2
+      is
+      begin
+        return "";
+      end Get_Error;
+  ---------------------
+  -- Get_Input_Entry --
+  ---------------------
+    function Get_Input_Entry
+      return String_2
+      is
+      begin
+        return Input_Output.Get_Input_Entry;
+      end Get_Input_Entry;
   -----------------
   -- Get_Catalog --
   -----------------
@@ -392,120 +453,67 @@ package body Neo
       begin
         return Input_Output.Get_Line_Size;
       end Get_Line_Size;
-  --------------
-  -- New_Line --
-  --------------
-    procedure New_Line(
-      Lines : in Integer_4_Positive := 1)
-      is
-      begin
-        for I in 1..Lines loop
-          Put(To_String_2(END_LINE));
-        end loop;
-      end New_Line;
-  -----------
-  -- Start --
-  -----------
-    procedure Start
-      is
-      begin
-        if RCurrent_Handler(The_Event) = null then
-          Set_Handler(The_Event, For_Duration, Events.Handler'access);
-        else
-          raise Timer_Error with Timer_Name & " started already";
-        end if;
-      end Start;
-  ----------
-  -- Stop --
-  ----------
-    procedure Stop
-      is
-      Success : Boolean := False;
-      use type Ada.Real_Time.Timing_Events.Timing_Event_Handler;
-      begin
-        if Real_Time.Timing_Events.Current_Handler (The_Event) /= null then
-          Real_Time.Timing_Events.Cancel_Handler (The_Event, Success);
-          if not Success then
-            raise Timer_Error with "fails to cancel " & Timer_Name;
-          end if;
-        end if;
-      end Stop;
-  ---------
-  -- "+" --
-  ---------
-    function "+"(
-      Left  : in Record_Timer;
-      Right : in Record_Timer)
-      return Record_Timer
-      is
-      begin
-
-      end "+";
-  ---------
-  -- "-" --
-  ---------
-    function "-"(
-      Left  : in Record_Timer;
-      Right : in Record_Timer)
-      return Record_Timer
-      is
-      begin
-
-      end "-";
-  ----------------------
-  -- Count_Occurances --
-  ----------------------
-    function Count_Occurances(
-      Item      : in String_2;
-      Occurance : in String_2)
-      return Integer_4_Natural
-      is
-      Result : Integer_4_Natural := 0;
-      begin
-
-      end Count_Occurances;
-  -----------------
-  -- Count_Lines --
-  -----------------
-    function Count_Lines(
+  -------------------
+  -- Get_Extension --
+  -------------------
+    function Get_Extension(
       Item : in String_2)
-      return Integer_4_Natural
+      return String_2
       is
-      Result : Integer_4_Natural := 0;
       begin
-
-      end Count_Lines;
+        for I in reverse Item'range loop
+          if Item(I) = '.' then
+            return ;
+          end if;
+          if I = Item'first then
+            return NULL_STRING_2;
+          end if;
+        end loop;
+      end Get_Extension;
   -----------
   -- Split --
   -----------
     function Split(
-      Item : in String_2_Unbounded)
-      return Array_String_2_Unbounded
+      Item   : in String_2;
+      Around : in String_2 := NULL_STRING_2)
+      return Array_String_2
       is
+      Index_List : Array_Integer_4_Natural(Item'range) := (others => 0);
+      Next_Index : Integer_4_Natural                   := Index_List'first;
       begin
-
+        Index_List(Next_Index) := Source_String'First;
+        while Index_List(Next_Index) < Source_String'Last loop
+          Next_Index := Next_Index + 1;
+          Index_List(Next_Index) := 1 + Index(Source_String(Index_List(Next_Index - 1)..Source_String'Last), ",");
+          if Index_List(Next_Index) = 1 then
+            Index_List(Next_Index) := Source_String'Last + 2;
+          end if;
+          Result.Add(Source_String(Index_List(Next_Index - 1)..Index_List(Next_Index)-2) & ".");
+        end loop;
+        return To_Array(Result);
       end Split;
-  ------------------------
-  -- Replace_Occurances --
-  ------------------------
-    function Replace_Occurances(
-      Item        : in String_2;
-      Occurance   : in String_2;
-      Replacement : in String_2)
-      return String_2
+    ---------------
+    function Split(
+    ---------------
+      Item   : in String_2;
+      Around : in Character_2)
+      return Array_String_2
       is
       begin
-      end Replace_Occurances;
+        return Split(Item, Around & "");
+      end Split;
   ----------------------
   -- Build_Asset_Path --
   ----------------------
     function Build_Asset_Path(
-      Name      : in String_2;
-      Separator : in String_2 := "/";
-      Directory : in String_2 := ".")
+      Name : in String_2)
       return String_2
       is
       begin
+        return
+          DIRECTORY_BASE      & DIRECTORY_SEPARATOR &
+          DIRECTORY_ASSETS    & DIRECTORY_SEPARATOR &
+          Get_Extension(Name) & DIRECTORY_SEPARATOR & Name;
       end Build_Asset_Path;
   ---------------------
   -- To_Radian_Image --
@@ -537,64 +545,71 @@ package body Neo
                   Count  => Trimmed_Input'last - 2 - Trim(Ada.Wide_Text_IO.Number_Base'Image(Base), Both)'Length));
           end Remove_Notation;
       end To_Radian_Image;
-  -----------------------------
-  -- To_Access_Character_1_C --
-  -----------------------------
-    function To_Access_Character_1_C(
-      Item : in String_1_C)
-      return Access_Character_1_C
+  ---------------
+  -- To_Stream --
+  ---------------
+    function To_Stream(
+      Data : in String_1)
+      return Stream_Element_Array
       is
+      Buffer : Array_Integer_Base64(Data'range) := 0;
+      Last   : Integer_4_Signed                 := Data'last;
       begin
-        return To_Unchecked_Access_Character_1_C(Item(Item'first)'address);
-      end To_Access_Character_1_C;
-  -----------------------------
-  -- To_Access_Character_2_C --
-  -----------------------------
-    function To_Access_Character_2_C(
-      Item : in String_2)
-      return Access_Character_2_C
-      is
-      begin
-        return To_Unchecked_Access_Character_2_C(To_String_2_C(Item)'address);
-      end To_Access_Character_2_C;
-  --------------------------------------
-  -- To_Access_Constant_Character_2_C --
-  --------------------------------------
-    function To_Access_Constant_Character_2_C(
-      Item : in String_2_C)
-      return Access_Constant_Character_2_C
-      is
-      begin
-        return To_Unchecked_Access_Constant_Character_2_C(Item(Item'first)'address);
-      end To_Access_Constant_Character_2_C;
-    ------------------------------------------
-    function To_Access_Constant_Character_2_C(
-    ------------------------------------------
-      Item : in String_2)
-      return Access_Constant_Character_2_C
-      is
-      begin
-        return To_Access_Constant_Character_2_C(To_C(Item));
-      end To_Access_Constant_Character_2_C;
-  --------------------------------------
-  -- To_Access_Constant_Character_1_C --
-  --------------------------------------
-    function To_Access_Constant_Character_1_C2(
-      Item : in String_1_C)
-      return Access_Constant_Character_1_C
-      is
-      begin
-        return To_Unchecked_Access_Constant_Character_1_C(Item(Item'first)'address);
-      end To_Access_Constant_Character_1_C2;
-    ------------------------------------------
-    function To_Access_Constant_Character_1_C(
-    ------------------------------------------
-      Item : in String_1)
-      return Access_Constant_Character_1_C
-      is
-      begin
-        return To_Access_Constant_Character_1_C2(To_C(Item));
-      end To_Access_Constant_Character_1_C;
+        for I in Data'range loop
+          for J in BASE64_ALPHABET'range loop
+            if BASE64_ALPHABET(J) = Data(I) then
+              Buffer(I) := J;
+              if
+              (I = Data'last - 1 and then Data(I + 1) = BASE64_TERMINATION) or
+              (I = Data'last - 2 and then Data(I + 1..I + 2) = (BASE64_TERMINATION, BASE64_TERMINATION))
+              then
+                Last := I;
+                exit;
+              end if;
+            end if;
+            if J = BASE64_ALPHABET'last then
+              raise Attempted_To_Decode_Non_Valid_Base_64_Digit_To_Data_Stream;
+            end if;
+          end loop;
+        end loop;
+        return To_Not_Null_Access_Stream_Element_Array(Buffer'access).all(Data'first..Data'first + (Last - Data'first) / 4 * 3);
+      end To_Stream;
+  -----------------
+  -- To_String_1 --
+  -----------------
+--      function To_String_1(
+--        Data : in not null access Root_Stream_Type'class)
+--        return String_1
+--        is
+--        Current  : Array_Integer_1_Unsigned(1..2) := (others => 0);
+--        Result   : String_1(1..Data'size * 2)     := (others => ' '); -- This could be sized better
+--        I        : Stream_Element_Offset          := Data'First;
+--        J        : Integer_4_Signed               := 1;
+--        begin
+--          while I <= Data'last loop
+--            if J + 4 > Result'last + 1 then
+--              return Trim(Result, Both);
+--            end if;
+--            Current(1) := Byte(Data(I));
+--            Result(J)  := BASE64_ALPHABET(Shift_Right(Current(1), 2));
+--            if I = Data'last then
+--              Result(J + 1..J + 3) := BASE64_ALPHABET(Shift_Left(Current(1) and 16#03#, 4)) & BASE64_ALPHABET'last & BASE64_ALPHABET'last;
+--              return Trim(Result, Both);
+--            end if;
+--            Current(2)    := Byte(Data(I + 1));
+--            Result(J + 1) := BASE64_ALPHABET(Shift_Left(Current(1) and 16#03#, 4) or Shift_Right(Current(2), 4));
+--            if I = Data'last - 1 then
+--              Result(J + 2..J + 3) := BASE64_ALPHABET(Shift_Left(Current(2) and 16#0F#, 2)) & BASE64_ALPHABET'last;
+--              return Trim(Result, Both);
+--            end if;
+--            Current(1):= Byte(Data(I + 2));
+--            Result(J + 2..J + 3) :=
+--              BASE64_ALPHABET(Shift_Left(Current(2) and 16#0F#, 2) or Shift_Right(Current(1), 6)) &
+--              BASE64_ALPHABET(Current(1) and 16#3F#);
+--            J := J + 4;
+--            I := I + 3;
+--          end loop;
+--        end To_String_1;
   -----------------
   -- To_String_1 --
   -----------------
@@ -755,87 +770,124 @@ package body Neo
       begin
         return To_String_1_C(To_String_1(Item));
       end To_String_1_C;
-  -----------------
-  -- To_String_1 --
-  -----------------
-    function To_String_1(
-      Data : in not null access Root_Stream_Type'class)
-      return String_1
+  -----------------------------
+  -- To_Access_Character_1_C --
+  -----------------------------
+    function To_Access_Character_1_C(
+      Item : in String_1_C)
+      return Access_Character_1_C
       is
-      Current  : Array_Integer_1_Unsigned(1..2) := (others => 0);
-      Result   : String_1(1..Data'size * 2)     := (others => ' '); -- This could be sized better
-      I        : Stream_Element_Offset          := Data'First;
-      J        : Integer_4_Signed               := 1;
       begin
-        while I <= Data'last loop
-          if J + 4 > Result'last + 1 then
-            return Trim(Result, Both);
-          end if;
-          Current(1) := Byte(Data(I));
-          Result(J)  := BASE64_ALPHABET(Shift_Right(Current(1), 2));
-          if I = Data'last then
-            Result(J + 1..J + 3) := BASE64_ALPHABET(Shift_Left(Current(1) and 16#03#, 4)) & BASE64_ALPHABET'last & BASE64_ALPHABET'last;
-            return Trim(Result, Both);
-          end if;
-          Current(2)    := Byte(Data(I + 1));
-          Result(J + 1) := BASE64_ALPHABET(Shift_Left(Current(1) and 16#03#, 4) or Shift_Right(Current(2), 4));
-          if I = Data'last - 1 then
-            Result(J + 2..J + 3) := BASE64_ALPHABET(Shift_Left(Current(2) and 16#0F#, 2)) & BASE64_ALPHABET'last;
-            return Trim(Result, Both);
-          end if;
-          Current(1):= Byte(Data(I + 2));
-          Result(J + 2..J + 3) :=
-            BASE64_ALPHABET(Shift_Left(Current(2) and 16#0F#, 2) or Shift_Right(Current(1), 6)) &
-            BASE64_ALPHABET(Current(1) and 16#3F#);
-          J := J + 4;
-          I := I + 3;
-        end loop;
-      end To_String_1;
-   ---------------
-   -- To_Stream --
-   ---------------
-     function To_Stream(
-       Data : in String_1)
-       return Stream
-       is
-       Current : array(1..2) of Stream_Element := ;
-       Result  : ;
-       I       : Stream_Element_Offset         := Data'First;
-       J       : Stream_Element_Offset         := Result'First;
-       begin
-        while I <= Data'last loop
-          if J + 3 > Result'last + 1 then
-            return Result;
-          end if;
-          Current(1) := Data(I);
-          if (BASE64_ALPHABET(Current(1)) and 16#C0#) /= 0 then
-            raise Attempted_To_Decode_Non_Valid_Base_64_Digit_To_Data_Stream with "'" & Character_1'val(Current(1)) & "'";
-          end if;
-          Current(2) := Data(I + 1);
-          if (BASE64_ALPHABET(Current(2)) and 16#C0#) /= 0 then
-            raise Attempted_To_Decode_Non_Valid_Base_64_Digit_To_Data_Stream with "'" & Character_1'val(Current(2)) & "'";
-          end if;
-          Result(J)  := Stream_Element(Shift_Left(BASE64_ALPHABET(Current(1)), 2) or Shift_Right(BASE64_ALPHABET(Current(2)), 4));
-          Current(1) := Data(I + 2);
-          if (BASE64_ALPHABET(Current(1)) and 16#C0#) /= 0 then
-            if Current(1) /= BASE64_TERMINATION then
-              raise Attempted_To_Decode_Non_Valid_Base_64_Digit_To_Data_Stream with "'" & Character_1'val(Current(1)) & "'";
-            end if;
-            return Result;
-          end if;
-          Result(J + 1) := Stream_Element(Shift_Left(BASE64_ALPHABET(Current(2)), 4) or Shift_Right(BASE64_ALPHABET(Current(1)), 2));
-          Current(2)    := Data(I + 3);
-          if (BASE64_ALPHABET(Current(2)) and 16#C0#) /= 0 then
-            if Current(2) /= BASE64_TERMINATION then
-              raise Attempted_To_Decode_Non_Valid_Base_64_Digit_To_Data_Stream with "'" & Character_1'val(Current(1)) & "'";
-            end if;
-            return Result;
-          end if;
-          Result(J + 2) := Stream_Element(Shift_Left(Current(1), 6) or Current(2);
-          J             := J + 3;
-          I             := I + 4;
-        end loop;
-      end To_Stream;
+        return To_Unchecked_Access_Character_1_C(Item(Item'first)'address);
+      end To_Access_Character_1_C;
+  -----------------------------
+  -- To_Access_Character_2_C --
+  -----------------------------
+    function To_Access_Character_2_C(
+      Item : in String_2)
+      return Access_Character_2_C
+      is
+      begin
+        return To_Unchecked_Access_Character_2_C(To_String_2_C(Item)'address);
+      end To_Access_Character_2_C;
+  --------------------------------------
+  -- To_Access_Constant_Character_2_C --
+  --------------------------------------
+    function To_Access_Constant_Character_2_C(
+      Item : in String_2_C)
+      return Access_Constant_Character_2_C
+      is
+      begin
+        return To_Unchecked_Access_Constant_Character_2_C(Item(Item'first)'address);
+      end To_Access_Constant_Character_2_C;
+    ------------------------------------------
+    function To_Access_Constant_Character_2_C(
+    ------------------------------------------
+      Item : in String_2)
+      return Access_Constant_Character_2_C
+      is
+      begin
+        return To_Access_Constant_Character_2_C(To_C(Item));
+      end To_Access_Constant_Character_2_C;
+  --------------------------------------
+  -- To_Access_Constant_Character_1_C --
+  --------------------------------------
+    function To_Access_Constant_Character_1_C2(
+      Item : in String_1_C)
+      return Access_Constant_Character_1_C
+      is
+      begin
+        return To_Unchecked_Access_Constant_Character_1_C(Item(Item'first)'address);
+      end To_Access_Constant_Character_1_C2;
+    ------------------------------------------
+    function To_Access_Constant_Character_1_C(
+    ------------------------------------------
+      Item : in String_1)
+      return Access_Constant_Character_1_C
+      is
+      begin
+        return To_Access_Constant_Character_1_C2(To_C(Item));
+      end To_Access_Constant_Character_1_C;
+  -----------------------------
+  -- To_Low_Order_Byte_First --
+  -----------------------------
+    function To_Low_Order_Byte_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array
+      is
+      begin
+        return Item;
+      end To_Low_Order_Byte_First;
+  ------------------------------------------------
+  -- To_Low_Order_Byte_Then_Low_Order_Bit_First --
+  ------------------------------------------------
+    function To_Low_Order_Byte_Then_Low_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array
+      is
+      begin
+        return Item;
+      end To_Low_Order_Byte_Then_Low_Order_Bit_First;
+  -------------------------------------------------
+  -- To_Low_Order_Byte_Then_High_Order_Bit_First --
+  -------------------------------------------------
+    function To_Low_Order_Byte_Then_High_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array
+      is
+      begin
+        return Item;
+      end To_Low_Order_Byte_Then_High_Order_Bit_First;
+  ------------------------------
+  -- To_High_Order_Byte_First --
+  ------------------------------
+    function To_High_Order_Byte_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array
+      is
+      begin
+        return Item;
+      end To_High_Order_Byte_First;
+  -------------------------------------------------
+  -- To_High_Order_Byte_Then_Low_Order_Bit_First --
+  -------------------------------------------------
+    function To_High_Order_Byte_Then_Low_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array
+      is
+      begin
+        return Item;
+      end To_High_Order_Byte_Then_Low_Order_Bit_First;
+  --------------------------------------------------
+  -- To_High_Order_Byte_Then_High_Order_Bit_First --
+  --------------------------------------------------
+    function To_High_Order_Byte_Then_High_Order_Bit_First(
+      Item : in Stream_Element_Array)
+      return Stream_Element_Array
+      is
+      begin
+        return Item;
+      end To_High_Order_Byte_Then_High_Order_Bit_First;
   -----------------------------
   -- Is_Low_Order_Byte_First --
   -----------------------------

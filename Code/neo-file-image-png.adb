@@ -26,11 +26,8 @@ package body PNG
   ----------
   -- Load --
   ----------
-    overriding function Load(
-      Tag         : in PNG.Tag;
-      Path        : in String_2;
-      Start_Frame : in Integer_4_Positive := 1;
-      For_Frames  : in Integer_4_Natural  := 0)
+    function Load(
+      Path : in String_2)
       return Array_Record_Graphic
       is
       File          : File_Type;
@@ -50,8 +47,7 @@ package body PNG
   ----------
   -- Save --
   ----------
-    overriding procedure Save(
-      Tag     : in PNG.Tag;
+    procedure Save(
       Path    : in String_2;
       Graphic : in Array_Record_Graphic)
       is

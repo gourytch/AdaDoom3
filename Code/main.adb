@@ -142,8 +142,9 @@ procedure Main
         null;
       end Handle_Graphics;
   begin
-    Neo.Set_Get_Language(Neo.Command.System.Text.Get_Language'access);
-    Neo.Initialize;
+    Neo.Command.Initialize;
+    Neo.Command.System.Text.Initialize;
+    Neo.Set_Localize(Neo.Command.System.Text.Localize'access);
     ----
     Run:
     ----
@@ -176,8 +177,8 @@ procedure Main
       Neo.Command.System.Text.Console.Is_Okay(
         Title   => Name & Localize(ERROR_TITLE),
         Message => Name & Localize(ERROR_MESSAGE),
-        Buttons => Neo.Command.System.Text.Yes_No_Buttons,
-        Symbol  => Neo.Command.System.Text.Error_Symbol,
+        Buttons => Neo.Command.System.Text.Console.Yes_No_Buttons,
+        Symbol  => Neo.Command.System.Text.Console.Error_Symbol,
         Icons   => Icons)
       then
         Neo.Command.System.Text.Console.Spawn;

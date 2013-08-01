@@ -33,6 +33,29 @@ package body Neo.Command.System.Text
         Set_Clipboard(Localize("Yes"));
         Put_Line(Localize("But does it work? ") & Get_Clipboard & "!");
       end Test;
+  --------------
+  -- Localize --
+  --------------
+    function Localize(
+      Item : in String_2)
+      return String_2
+      is
+      Result : String_2 := Input_Output.Localize(Item);
+      begin
+        if Result = NULL_STRING_2 then
+          if DO_PUT_LOCALIZE_FAILURE then
+            Put_Debug_Line(
+              FAILED_LOCALIZE_PREFIX & Item(Item'first..(
+                if Item'length >= FAILED_LOCALIZE_PREVIEW_LENGTH then
+                  Item'first + FAILED_LOCALIZE_PREVIEW_LENGTH - 1
+                else
+                  Item'last)) &
+              FAILED_LOCALIZE_POSTFIX);
+          end if;
+          return Item;
+        end if;
+        return Result;
+      end Localize;
   ------------------
   -- Get_Language --
   ------------------

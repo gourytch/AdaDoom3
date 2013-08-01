@@ -29,7 +29,9 @@ package body Neo.Command.System.Text.Console
       Current_Icon_Path : String_2_Unbounded := NULL_STRING_2_UNBOUNDED;
       Current_Title     : String_2_Unbounded := NULL_STRING_2_UNBOUNDED;
       begin
+        ------------------
         accept Initialize(
+        ------------------
           Icon_Path : in String_2;
           Title     : in String_2)
           do
@@ -64,7 +66,7 @@ package body Neo.Command.System.Text.Console
               Icon    => Enumerated_Icon'val(I mod (1 + Enumerated_Icon'pos(Enumerated_Icon'last))));
         end loop;
         if Get_Version in Enumerated_Windows_System'range then
-          Spawn_Console(BAP("icon.ico"));
+          Spawn_Console("doom.ico");
         end if;
       end Test;
   -------------------
@@ -144,7 +146,7 @@ package body Neo.Command.System.Text.Console
     procedure Send_Catalog
       is
       begin
-        Open_Webpage("http://www.google.com"); -- To_UTF8
+        Open_Webpage("http://www.google.com");
       end Send_Catalog;
   ------------------
   -- Save_Catalog --

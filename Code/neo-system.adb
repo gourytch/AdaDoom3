@@ -46,14 +46,6 @@ package body Neo.Command.System
         Put_Line(Localize("Opening ") & "google.com...");
         Open_Webpage("http://www.google.com");
       end Test;
-  --------------
-  -- Finalize --
-  --------------
-    procedure Finalize
-      is
-      begin
-        Neo.Output.Finalize;
-      end Finalize;
   --------------------------
   -- Is_Feature_Supported --
   --------------------------

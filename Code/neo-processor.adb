@@ -260,10 +260,10 @@ package body Neo.Command.System.Processor
       return Integer_8_Unsigned
       is
       begin
-        if TRUST_COMPILER then
-          return Integer_8_Unsigned(Number_Of_CPUs);
+        if not TRUST_COMPILER then
+          return Implementation_For_Operating_System.Get_Number_Of_Cores;
         end if;
-        return Implementation_For_Operating_System.Get_Number_Of_Cores;
+        return Integer_8_Unsigned(Number_Of_CPUs);
       exception
         when Unsupported_Feature | Call_Failure =>
           Put_Debug_Line(Localize(FAILED_GET_NUMBER_OF_CORES_OS));
@@ -297,8 +297,8 @@ package body Neo.Command.System.Processor
             Start : Integer_8_Unsigned := 0;
             begin
               Start := Get_Clock_Ticks;
-              delay DELAY_FOR_PROCESSOR_SPEED_TIMING;
-              return (Get_Clock_Ticks - Start) * Integer_8_Unsigned(1.0 / DELAY_FOR_PROCESSOR_SPEED_TIMING);
+              delay SECONDS_FOR_PROCESSOR_SPEED_TIMING;
+              return (Get_Clock_Ticks - Start) * Integer_8_Unsigned(1.0 / SECONDS_FOR_PROCESSOR_SPEED_TIMING);
             end Time_Processor;
       end Get_Speed_In_Megahertz;
   ---------------

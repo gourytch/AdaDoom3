@@ -24,11 +24,8 @@ package body Neo.File.Image.JPEG
   ----------
   -- Load --
   ----------
-    overriding function Load(
-      Tag         : in JPEG.Tag;
-      Path        : in String_2;
-      Start_Frame : in Integer_4_Positive := 1;
-      For_Frames  : in Integer_4_Natural  := 0)
+    function Load(
+      Path : in String_2)
       return Array_Record_Graphic
       is
       begin
@@ -37,8 +34,7 @@ package body Neo.File.Image.JPEG
   ----------
   -- Save --
   ----------
-    overriding procedure Save(
-      Tag     : in JPEG.Tag;
+    procedure Save(
       Path    : in String_2;
       Graphic : in Array_Record_Graphic)
       is

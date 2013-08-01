@@ -14,6 +14,8 @@
 --
 --
 --
+with
+  Ada.Containers.Vector;
 package Neo.File
   is
   ----------------
@@ -23,10 +25,7 @@ package Neo.File
     Unsupported_Subformat : Exception;
     Unsupported_Format    : Exception;
     Currupt               : Exception;
-  ------------------
-  -- Enumerations --
-  ------------------
-
+    Attempted_To_Save_Under_Multiple_Formats : Exception;
   -------------
   -- Records --
   -------------
@@ -52,4 +51,7 @@ package Neo.File
       Path    : in String_2;
       Formats : in Array_Record_Format)
       return Array_Type_To_Index;
+    function Find_All_Paths_With_Extension(
+      Extension : in String_2)
+      return Array_String_2;
   end Neo.File;

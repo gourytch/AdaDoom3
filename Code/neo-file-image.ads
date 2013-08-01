@@ -16,16 +16,16 @@
 --
 package Neo.File.Image
   is
-  ----------------
-  -- Exceptions --
-  ----------------
-    No_Such_Frame                            : Exception;
-    Attempted_To_Save_Under_Multiple_Formats : Exception;
   ------------------
   -- Enumerations --
   ------------------
     type Enumerated_Format
       is(
+      Flexible_Image_Transport_System_Format,
+      --
+      -- 1981
+      --
+      --
       Truevision_Graphics_Adapter_Format,
       --
       -- 1984 Truevision
@@ -51,6 +51,11 @@ package Neo.File.Image
       -- 1988 Jef Poskanzer
       --      http://web.archive.org/web/20130517063911/http://netpbm.sourceforge.net/doc/pbm.html
       --
+      X_Pixmap_Format,
+      --
+      -- 1989 Daniel Dardailler and Colas Nahaboo
+      --
+      --
       Bit_Map_Format,
       --
       -- 1990 Microsoft
@@ -72,11 +77,6 @@ package Neo.File.Image
       --      http://web.archive.org/web/20130314150613/http://jpeg.org/public/fcd15444-1.pdf
       --      http://web.archive.org/web/20120117162132/http://www.mast.queensu.ca/~web/Papers/lui-project01.pdf
       --
-    type Enumerated_Color
-      is(
-      Luma_Chroma_Blue_Chroma_Red_Color, -- YCbCr
-      Luma_Grey_Color,                   -- YGrey
-      Cyan_Magenta_Yellow_Black_Color);  -- CMYK
     type Enumerated_Colors
       is(
       Monochrome_Colors,
@@ -89,6 +89,7 @@ package Neo.File.Image
       Monochrome_Colors                           => 1,
       Eight_Colors                                => Byte'size / 2,
       Sixteen_Colors                              => Byte'size,
+      Thirty_Two_Per__Colors                       => Byte'size * 2 - 1,
       Thirty_Two_Per_Colors                       => Byte'size * 2,
       Two_Hundred_Fifty_Six_Per_Colors            => Byte'size * 3,
       Alpha_With_Two_Hundred_Fifty_Six_Per_Colors => Byte'size * 4);
@@ -139,13 +140,10 @@ package Neo.File.Image
   -----------------
     procedure Test;
     function Load(
-      Path  : in String_2;
-      Frame : in Integer_4_Positive := 1)
+      Path : in String_2)
       return Record_Graphic;
     function Load(
-      Path        : in String_2;
-      Start_Frame : in Integer_4_Positive := 1;
-      For_Frames  : in Integer_4_Natural  := 0) -- Zero indicates all frames
+      Path : in String_2)
       return Array_Record_Graphic;
     procedure Save(
       Path    : in String_2
@@ -156,22 +154,24 @@ package Neo.File.Image
 -------
 private
 -------
+  ---------------------
+  -- Implementations --
+  ---------------------
+  --
+  -- To add an implementation...
+  --
+  -- 1 Create a new enumerated entry in the Enumerated_Formats type above and add a new entry in the FORMATS constant below
+  --
+  -- 2 Add a separate package in the Packages section below that has a Load and Save subprogram matching the definition
+  --   specified in Neo.File
+  --
+  -- 3 Add an entry in the Implementation instantiation for the new Enumerated_Format
+  --
   ---------------
   -- Constants --
   ---------------
     FORMATS : Array_Record_Format(Enumerated_Format'range) :=(
-      Flexible_Image_Transfer_System_Format =>(
-        Comments   => null,
-        Extensions =>
-          new Array_String_2(
-            new String_2("FITS"),
-            new String_2("FTS"),
-            new String_2("")),
-        Signatures =>
-          new Array_String_2(
-            new String_2("SIMPLE"))),
       Truevision_Graphics_Adapter_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("TGA"),
@@ -179,13 +179,11 @@ private
             new String_2("TARGA")),
         Signatures => null),
       Personal_Computer_Exchange_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("PCX")),
         Signatures => null),
       Graphics_Interchange_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("GIF"),
@@ -195,7 +193,6 @@ private
             new String_2("GIF87a"),
             new String_2("GIF89a"))),
       Tagged_Image_File_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("TIF"),
@@ -205,7 +202,6 @@ private
             new String_2("II"),
             new String_2("MM"))),
       Portable_Pixmap_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("PPM"),
@@ -221,7 +217,6 @@ private
             new String_2("P5")),
             new String_2("P6"))),
       Bit_Map_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("BMP"),
@@ -231,7 +226,6 @@ private
             new String_2("DIB"),
             new String_2("BM"))),
       Joint_Photographic_Experts_Group_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("JPG"),
@@ -255,7 +249,6 @@ private
             new String_2( -- ‰PNG
               Character_1'val(16#89#) & "PNG" & ASCII.CR & ASCII.LF & ASCII.SUB & ASCII.LF))),
       Joint_Photographic_Experts_Group_2000_Format =>(
-        Comments   => null,
         Extensions =>
           new Array_String_2(
             new String_2("JP2"),
@@ -268,29 +261,136 @@ private
           new Array_String_2(
             new String_2( -- jP
               ASCII.NUL & ASCII.NUL & ASCII.NUL & Character_1'val(16#FF#) & "jP"))));
+  --------------
+  -- Packages --
+  --------------
+    package FITS
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end FITS;
+    package PCX
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end PCX;
+    package BMP
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end BMP;
+    package TIFF
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end TIFF;
+    package GIF
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end GIF;
+    package PPM
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end PPM;
+    package PNG
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end PNG;
+    package TGA
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end TGA;
+    package JPEG
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end JPEG;
+    package JP2
+      is
+        function Load(
+          Path : in String_2)
+          return Array_Record_Graphic;
+        procedure Save(
+          Path    : in String_2;
+          Graphic : in Array_Record_Graphic);
+      end JP2;
+    package body FITS
+      is separate;
+    package body TGA
+      is separate;
+    package body PCX
+      is separate;
+    package body TIFF
+      is separate;
+    package body GIF
+      is separate;
+    package body PPM
+      is separate;
+    package body BMP
+      is separate;
+    package body PNG
+      is separate;
+    package body JPEG
+      is separate;
+    package body JP2
+      is separate;
   --------------------
   -- Implementation --
   --------------------
-    type Tag
-      is tagged
-      with null record;
-    type Array_Tag
-      is array(Positive range <>)
-      of Tag;
-    function Find(
-      Format : in Enumerated_Format)
-      return Array_Tag;
-    function Get(
-      Tag : in Tag)
-      return Enumerated_Format;
-    function Load(
-      Tag         : in Tag;
-      Path        : in String_2;
-      Start_Frame : in Integer_4_Positive := 1;
-      For_Frames  : in Integer_4_Natural  := 0)
-      return Array_Record_Graphic;
-    procedure Save(
-      Tag     : in Tag;
-      Path    : in String_2;
-      Graphic : in Array_Record_Graphic);
+    package Instantiation
+      is new Implementation(
+        Type_To_Handle => Neo.File.Image.Record_Graphic,
+        Format         => Neo.File.Image.Enumerated_Format,
+        Formats        => Neo.File.Image.FORMATS
+        Operations     =>(
+          Flexible_Image_Transfer_System_Format        => (FITS.Load'access, FITS.Save'access),
+          Truevision_Graphics_Adapter_Format           => ( TGA.Load'access,  TGA.Save'access),
+          Personal_Computer_Exchange_Format            => ( PCX.Load'access,  PCX.Save'access),
+          Graphics_Interchange_Format                  => (TIFF.Load'access, TIFF.Save'access),
+          Tagged_Image_File_Format                     => ( GIF.Load'access,  GIF.Save'access),
+          Portable_Pixmap_Format                       => ( PPM.Load'access,  PPM.Save'access),
+          Bit_Map_Format                               => ( BMP.Load'access,  BMP.Save'access),
+          Joint_Photographic_Experts_Group_Format      => ( PNG.Load'access,  PNG.Save'access),
+          Portable_Network_Graphics_Format             => (JPEG.Load'access, JPEG.Save'access)
+          Joint_Photographic_Experts_Group_2000_Format => ( JP2.Load'access,  JP2.Save'access));
   end Neo.File.Image;

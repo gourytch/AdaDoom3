@@ -51,7 +51,7 @@ project Neo is
   -- Filesystem --
   ----------------
     Casing               := "Lowercase";
-    File_Main            := "main"; -- Must be correct case
+    File_Main            := "main";
     Dot_Replacement      := "-";
     Suffix_Specification := ".ads";
     Suffix_Body          := ".adb";

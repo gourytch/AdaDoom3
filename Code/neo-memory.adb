@@ -15,7 +15,7 @@
 --
 --
 package body Neo.Command.System.Memory
-  is pragma Source_File_Name("neo.memory.adb");
+  is pragma Source_File_Name("neo-memory.adb");
   --------------------
   -- Implementation --
   --------------------
